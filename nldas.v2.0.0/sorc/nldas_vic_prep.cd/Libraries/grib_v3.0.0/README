@@ -1,0 +1,9 @@
+(1) export GRIB_ENV=/land/save/Youlong.Xia/NLDASII/Model/VIC/src/Libraries/grib_v3.0.0
+
+to set current directory
+
+(2) ./Clean
+
+(3) ./Install linux_gcc
+
+by Youlong Xia on 13 March 2013

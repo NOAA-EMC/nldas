@@ -1,0 +1,46 @@
+#!/bin/ksh
+###################################################################
+# This script runs the land data analysis for the NLDAS 4 models
+# Usage: exnldas_${model}.sh.ecf
+# History:  2013.05 c-shell by Youlong Xia (original owner)
+#           2013.05.17 converted to korn shell by Julia Zhu  
+###################################################################
+set -x
+
+cd $DATA
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+cdatem1=$PDYm1$cyc
+cdate=$PDY$cyc
+
+# DEFINE THE LAST NARR FILE
+export LASTNARRFILE=${LASTNARRFILE:-$LOGDIR/nldas_prep_lastprocessed.log}
+
+# GET LAST NARR DAY PROCESSED - END OF FORCING ARCHIVE
+export RUNENDDATE=`cat $LASTNARRFILE`
+export RUNENDDATE=`$utilscript/finddate.sh $RUNENDDATE d-1`
+
+# FIND ENDTIME OF LAST ${MODEL} RUN
+export RUNSTARTDATE=`cat $LOGDIR/nldas_${model}_lastprocessed.log`
+export RUNSTARTDATE=`$utilscript/finddate.sh $RUNSTARTDATE d+1`
+echo $RUNSTARTDATE $RUNENDDATE
+echo "USING $LASTRSTFILE to RESTART CURRENT ${MODEL} RUN"
+echo "RUNNING THROUGH: $RUNENDDATE"
+
+
+RUNSTARTDATE=${RUNSTARTDATE:-$cdatem1}
+RUNENDDATE=${RUNENDDATE:-$cdate}
+if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
+  $USHnldas/nldas_${model}.sh $RUNSTARTDATE $RUNENDDATE 
+fi
+
+#####################################################################
+
+msg="JOB $job HAS COMPLETED NORMALLY."
+echo $msg
+postmsg "$jlogfile" "$msg"
+
+############## END OF SCRIPT #######################
+

@@ -1,0 +1,9 @@
+**********************************************************************
+ADDENDUM
+**********************************************************************
+9/8/98 encoder_ex3
+- Unit conversion info from $GRIB_ENV/tables/neons2grib.2.1  is used to
+  convert data from the IEEE file to GRIB units.
+
+10/02/98:  upgraded OS from IRIX 6.2 to IRIX 6.5
+           upgraded C-compiler from 6.2 to 7.2.1

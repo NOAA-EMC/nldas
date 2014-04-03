@@ -1,0 +1,41 @@
+#!/bin/ksh
+###################################################################
+# This script runs the river routing code for the 4 NLDAS models
+# Usage: exnldas_routing.sh.ecf
+# History:  2013.05 c-shell by Youlong Xia (original owner)
+#           2013.08 converted to korn shell by Youlong Xia and Yuqiu Zhu  
+###################################################################
+set -x
+
+cd $DATA
+
+msg="HAS BEGUN on `hostname`"
+postmsg "$jlogfile" "$msg"
+
+# Define the last LDAS rundate
+export LASTLDASFILE=${LASTLDASFILE:-$LOGDIR/nldas_${model}_lastprocessed.log}
+
+# GET LAST LDAS DAY PROCESSED 
+export RUNENDDATE=`cat $LASTLDASFILE`
+
+# RUN ROUTING MODEL 
+
+# FIND ENDTIME OF LAST ROUTING RUN
+export LASTRSTFILE=${LASTRSFILE:-$LOGDIR/nldas_${model}_routing.log}
+export LAST_ROUTING=`cat $LASTRSTFILE`
+export RUNSTARTDATE=`/nwprod/util/ush/finddate.sh $LAST_ROUTING d+1`
+echo "USING: $LASTRSTFILE to RESTART CURRENT ROUTING RUN"
+echo "RUNNING THROUGH: $RUNENDDATE"
+
+if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
+  $USHnldas/nldas_routing.sh $RUNSTARTDATE $RUNENDDATE 
+fi
+
+#####################################################################
+
+msg="JOB $job HAS COMPLETED NORMALLY."
+echo $msg
+postmsg "$jlogfile" "$msg"
+
+############## END OF SCRIPT #######################
+

@@ -1,0 +1,49 @@
+as of 8/26/97
+total 424
+-rw-r--r--    1 nakajima user        1440 Aug 25 10:01 CHANGES.LOG
+-rwxr-xr-x    1 nakajima user       14094 Aug 13 13:02 SWAFS2grib.2.1
+-rwxr-xr-x    1 nakajima user        4439 Aug 13 13:02 coamps2grib.2.1
+-rwxr-xr-x    1 nakajima user        4919 Aug 13 13:02 fake58
+-rw-r--r--    1 nakajima user       13515 Aug 26 11:04 g1tab_1
+-rw-r--r--    1 nakajima user       22715 Dec 31  1996 g1tab_128_2.1
+-rw-r--r--    1 nakajima user       22752 Dec 31  1996 g1tab_128_2.2
+-rw-r--r--    1 nakajima user       23459 Dec 31  1996 g1tab_129_2.1
+-rw-r--r--    1 nakajima user       13515 Jun 11  1996 g1tab_2
+-rw-r--r--    1 nakajima user       23513 Aug 25 09:27 g1tab_58_2.0
+-rw-r--r--    1 nakajima user       23628 Dec 31  1996 g1tab_7_2.0
+-rwxr-xr-x    1 nakajima user       14033 Aug 13 13:02 neons2grib.2.1
+-rw-r--r--    1 nakajima user         609 Jul 24  1996 orig_ctrs
+-rw-r--r--    1 nakajima user          36 Aug 26 10:53 tables.cfg
+
+---------------------------------------------------------------------------
+NOTES:
+- 'neons2grib.2.1' is no longer used since NEONS is now storing GRIB messages
+externally in GRIB format.  This file is kept for reference only.
+
+---------------------------------------------------------------------------
+CHANGES LOG
+updates need to be reflected in $grib/tables/,  $tbl/ (for FTP process)
+and in rebundled grib_v3.*.tar.gz.
+---------------------------------------------------------------------------
+
+8/25/97 per S.Lowe (SJL), per Cindy Curtis (CC) "g1tab_58_2.0" 
+moved Tbl2 Sub-A Index 265 [009  temperature of ground or sea, K]
+    to Main Tbl2 Index 133 [133  temperature of ground or sea, K]
+    New file size still 23513;
+
+10/08/97 'tables.cfg' now holds "ftp.nrlmry.navy.mil send/GRIB_TABLES"
+
+10/24/97 per SJL/CC  
+   new in "g1tab_58_2.0":  [146, temperature error, K]
+
+11/05/97
+   + geoms [81, conusa_205x137] and [200, global_1440x721] to g1tab_58.2.0
+
+02/12/98
+   cp -p g1tab_58_2.0 g1tab_58.55_2.0  (TEDS data)
+
+02/25/98  removed left over test line from coamps2grib.2.1
+temp                        0           011           1.0        0.0      3
+
+09/29/98 
+- created g1tab_58.50_2.0 to support WSG table.

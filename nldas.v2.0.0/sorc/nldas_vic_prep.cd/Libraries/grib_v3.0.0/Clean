@@ -1,0 +1,76 @@
+#!/bin/sh
+# Script to remove all *.o & executables from the GRIB library and 
+# related programs
+# Before running this install script, do the following steps:
+#  1)  Make sure the GRIB_ENV variable is defined
+#  2)  Verify $GRIB_ENV/config.os
+#
+# To invoke script, at your Unix prompt:
+# type:   cd $GRIB_ENV <cr>
+# type:   Clean <cr>
+############################################################################
+
+# make sure script is invoked from the right place
+if [ "$GRIB_ENV" != "`pwd`" -o "$GRIB_ENV" = "" ];
+then
+   echo "*** error ***"
+   echo " $0 only runs if when variable GRIB_ENV is set to curr dir."
+   echo " Setting new environment variables in your login file will not take "
+   echo " effect until either you re-login or re-source your login file."
+   echo " Check with your System Administrator."
+   echo ""
+   exit;
+fi
+
+if [ `ls . 2>&- | grep libsrc    | wc -l` = 0  -o 	\
+     `ls . 2>&- | grep config    | wc -l` = 0  -o	\
+     `ls . 2>&- | grep include   | wc -l` = 0  -o	\
+     `ls . 2>&- | grep lib       | wc -l` = 0  -o	\
+     `ls . 2>&- | grep src       | wc -l` = 0  -o	\
+     `ls . 2>&- | grep run       | wc -l` = 0  -o	\
+     `ls . 2>&- | grep bin       | wc -l` = 0  -o	\
+     `ls ./src 2>&- | grep gribsimp    | wc -l` = 0 -o \
+     `ls ./src 2>&- | grep encoder_ex  | wc -l` = 0 -o \
+     `ls ./src 2>&- | grep decoder_ex  | wc -l` = 0 ];
+then
+   echo "Cannot find some/all of required dirs! "
+   echo
+   echo "Verify that the following directory structure exists"
+   echo "relative to the Clean script location:"
+   echo "	./bin"
+   echo "	./config"
+   echo "	./include"
+   echo "	./libsrc"
+   echo "	./lib"
+   echo "	./run"
+   echo "	./src"
+   echo "	     /decoder_ex"
+   echo "	     /encoder_ex"
+   echo "	     /getgribieee"
+   echo "	     /gribsimp"
+   echo
+   exit;
+fi
+
+
+echo "Remove the old library & executables"
+rm -f $GRIB_ENV/lib/grib.a
+rm -f $GRIB_ENV/bin/decoder_ex
+rm -f $GRIB_ENV/bin/encoder_ex1
+rm -f $GRIB_ENV/bin/encoder_ex2
+rm -f $GRIB_ENV/bin/encoder_ex3
+rm -f $GRIB_ENV/bin/getgribieee  
+rm -f $GRIB_ENV/bin/gribsimp
+
+rm -f $GRIB_ENV/run/*
+echo doing libsrc now
+cd  $GRIB_ENV/libsrc; make clobber
+echo doing encoder_Ex now
+cd  $GRIB_ENV/src/encoder_ex; make clobber
+echo doing Decoder_Ex now
+cd  $GRIB_ENV/src/decoder_ex; make clobber
+echo doing gribsimp now
+cd  $GRIB_ENV/src/gribsimp; make clobber
+echo doing getgribieee now
+cd  $GRIB_ENV/src/getgribieee; make clobber
+echo "Clean script is complete"
