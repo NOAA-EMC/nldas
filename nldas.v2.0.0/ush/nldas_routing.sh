@@ -7,6 +7,8 @@
 ##############################################################
 set -x
 
+export alert_type=${alert_type:-NLDAS_${MODEL}}
+
 cd $DATA
 
 if [ $# -lt 2 ]; then
@@ -127,7 +129,7 @@ while [ $sdate -le $edate ]; do
     while [ $hh -le 23 ]; do
       mv ${sdate}${hh}.STRM.grb $COM_OUT/nldas.$sdate/${model}.t${cyc}z.STRM.grbf${hh}
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_${MODEL} $job $COM_OUT/nldas.$sdate/${model}.t${cyc}z.STRM.grbf${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate/${model}.t${cyc}z.STRM.grbf${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi

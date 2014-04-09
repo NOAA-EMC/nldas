@@ -7,6 +7,8 @@
 ##############################################################
 set -x
 
+export alert_type=${alert_type:-NLDAS_NOAH};
+
 cd $DATA
 
 if [ $# -lt 2 ]; then
@@ -138,13 +140,13 @@ EOF
     # Copy grib files to /com:
     mv ${sdate1}00.NOAH.grb  $COM_OUT/nldas.$sdate1/noah.t${cyc}z.grbf00
     if [ $SENDDBN = YES ]; then
-       $DBNROOT/bin/dbn_alert MODEL NLDAS_NOAH $job $COM_OUT/nldas.$sdate1/noah.t${cyc}z.grbf00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate1/noah.t${cyc}z.grbf00
     fi
     hh=01
     while [ $hh -le 23 ]; do
       mv ${sdate}${hh}.NOAH.grb $COM_OUT/nldas.$sdate/noah.t${cyc}z.grbf${hh}
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_NOAH $job $COM_OUT/nldas.$sdate/noah.t${cyc}z.grbf${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate/noah.t${cyc}z.grbf${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi

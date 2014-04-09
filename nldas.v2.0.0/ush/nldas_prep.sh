@@ -7,6 +7,8 @@
 ##############################################################
 set -x
 
+export alert_type=${alert_type:-NLDAS_PREP}
+
 cd $DATA
 
 if [ $# -lt 2 ]; then
@@ -116,9 +118,8 @@ while [ $sdate -le $edate ]; do
   mv $outdir1/${sdate1}00.${bsufix}2 $COMFOR1/nldas.t${cyc}z.force-b.grb2f00
 
   if [ $SENDDBN = YES ]; then
-       $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR1/nldas.t${cyc}z.force-a.grbf00
-        $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR1/nldas.t${cyc}z.force-a.grb2f00
-       $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR1/nldas.t${cyc}z.force-b.grb2f00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-a.grb2f00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-b.grb2f00
     fi
     hh=01
     while [ $hh -le 12 ]; do
@@ -127,9 +128,8 @@ while [ $sdate -le $edate ]; do
     mv $outdir1/${sdate1}${hh}.${bsufix}2 $COMFOR1/nldas.t${cyc}z.force-b.grb2f${hh}
 
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR1/nldas.t${cyc}z.force-a.grbf${hh}
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR1/nldas.t${cyc}z.force-a.grb2f${hh}
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR1/nldas.t${cyc}z.force-b.grb2f${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-a.grb2f${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-b.grb2f${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi
@@ -157,19 +157,17 @@ while [ $sdate -le $edate ]; do
   mv $outdir/${sdate}00.${bsufix}2  $COMFOR/nldas.t${cyc}z.force-b.grb2f00
 
   if [ $SENDDBN = YES ]; then
-       $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR/nldas.t${cyc}z.force-a.grbf00
-        $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR/nldas.t${cyc}z.force-a.grb2f00
-       $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR/nldas.t${cyc}z.force-b.grb2f00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-a.grb2f00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-b.grb2f00
    fi
     hh=01
     while [ $hh -le 23 ]; do
     mv $outdir/${sdate}${hh}.${asufix} $COMFOR/nldas.t${cyc}z.force-a.grbf${hh}
-   mv $outdir/${sdate}${hh}.${asufix}2 $COMFOR/nldas.t${cyc}z.force-a.grb2f${hh}
-   mv $outdir/${sdate}${hh}.${bsufix}2 $COMFOR/nldas.t${cyc}z.force-b.grb2f${hh}
+    mv $outdir/${sdate}${hh}.${asufix}2 $COMFOR/nldas.t${cyc}z.force-a.grb2f${hh}
+    mv $outdir/${sdate}${hh}.${bsufix}2 $COMFOR/nldas.t${cyc}z.force-b.grb2f${hh}
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR/nldas.t${cyc}z.force-a.grbf${hh}
-          $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR/nldas.t${cyc}z.force-a.grb2f${hh}
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_PREP $job $COMFOR/nldas.t${cyc}z.force-b.grb2f${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-a.grb2f${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-b.grb2f${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi

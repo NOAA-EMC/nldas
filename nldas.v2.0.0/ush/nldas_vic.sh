@@ -48,6 +48,7 @@ FORCE_OK=${FALSE}
 RESTART_OK=${FALSE}
 EXIT_STATUS=0
 day=0
+export alert_type=${alert_type:-NLDAS_VIC}
 
 # forcing and vic output file extensions
   FORCE_FILE_EXT=FORCING.GRB
@@ -234,7 +235,7 @@ while [ $sdate -le $edate ]; do
    while [ $hh -le 23 ]; do
      mv $OUTPUT_GRIB_DIR/${sdate}${hh}.VIC.grb $COM_OUT/nldas.$sdate/vic.t${cyc}z.grbf${hh}
      if [ $SENDDBN = YES ]; then
-        $DBNROOT/bin/dbn_alert MODEL NLDAS_VIC $job $COM_OUT/nldas.$sdate/vic.t${cyc}z.grbf${hh}
+        $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate/vic.t${cyc}z.grbf${hh}
      fi
      let "hh=hh+1"
      if [ $hh -lt 10 ]; then hh=0$hh; fi

@@ -8,6 +8,8 @@
 ##############################################################
 set -x
 
+export alert_type=${alert_type:-NLDAS_MOSAIC};
+
 cd $DATA
 
 if [ $# -lt 2 ]; then
@@ -106,7 +108,7 @@ while [ $sdate -le $edate ]; do
     while [ $hh -le 12 ]; do
       cp -p $INDIR/$year2/$sdate1/${sdate1}${hh}.grb $COM_OUT/nldas.$sdate1/mosaic.t${cyc}z.grbf${hh}
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL NLDAS_MOSAIC $job $COM_OUT/nldas.$sdate1/mosaic.t${cyc}z.grbf${hh}
+         $DBNROOT/bin/dbn_alert ${alert_type} $job $COM_OUT/nldas.$sdate1/mosaic.t${cyc}z.grbf${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi
@@ -118,7 +120,7 @@ while [ $sdate -le $edate ]; do
    while [ $hh -le 23 ]; do
      cp  $INDIR/$year1/$sdate/${sdate}${hh}.grb $COM_OUT/nldas.$sdate/mosaic.t${cyc}z.grbf${hh}
      if [ $SENDDBN = YES ]; then
-        $DBNROOT/bin/dbn_alert MODEL NLDAS_MOSAIC $job $COM_OUT/nldas.$sdate/mosaic.t${cyc}z.grbf${hh}
+        $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate/mosaic.t${cyc}z.grbf${hh}
      fi
      let "hh=hh+1"
      if [ $hh -lt 10 ]; then hh=0$hh; fi
