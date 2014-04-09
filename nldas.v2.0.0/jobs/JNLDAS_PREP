@@ -28,8 +28,11 @@ fi
 # This block can be modified for different test environment
 ###############################################################
 if [ $RUN_ENVIR = prod -a $envir != prod ]; then
-  export SENDDBN=${SENDDBN:-NO}
+# export SENDDBN=${SENDDBN:-NO}
+  export SENDDBN=${SENDDBN:-YES}
   export jlogfile=${jlogfile:-/com/logs/${envir}/jlogfile}
+  export DATA_IN=${DATA_IN:-/tmpnwprd2}
+  export DBNROOT=/nwprod/spa_util/fakedbn
 fi
 
 export PS4='$SECONDS + '
@@ -56,6 +59,15 @@ export cycle=t${cyc}z
 ##########################
 export NET=${NET:-nldas}
 export RUN=${RUN:-nldas}
+
+###########################
+# Define alert_type
+###########################
+if [ $RUN_ENVIR = prod -a $envir != prod ]; then
+  export alert_type=NLDAS_PREP_PARA
+fi
+
+export alert_type=${alert_type:-NLDAS_PREP}
 
 ####################################
 # Determine Job Output Name on System
@@ -110,6 +122,7 @@ export utilities=${utilities:-/nwprod/util/ush}
 ##############################
 sh $utilscript/setup.sh
 
+## export PDY=${PDY:-20140325};
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
@@ -128,7 +141,7 @@ export COMOUTp1=$COM_OUT/nldas.${PDYp1}
 
 export LOGDIR=${LOGDIR:-/com/${NET}/${envir}/logdir}
 
-mkdir -m 775 -p $COMOUT $COMOUTp1
+mkdir -m 775 -p $COMOUT $COMOUTp1 $LOGDIR
 
 env
 
