@@ -19,7 +19,7 @@
       character filnam*100
 
 !     open grib2 file
-      call baopen (lugb, trim(filnam), jret)
+      call baopenr (lugb, trim(filnam), jret)
       if (jret.ne.0) then
        print *, 'jret=',jret
         write(6,*) 'GRIB:BAOPEN ERR FOR DATA ',trim(filnam)
