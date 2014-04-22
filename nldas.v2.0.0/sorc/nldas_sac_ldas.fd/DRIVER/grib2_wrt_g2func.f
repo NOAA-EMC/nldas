@@ -186,13 +186,13 @@
       ipdstmpl(20)=0           ! End minute
       ipdstmpl(21)=0           ! End second
       ipdstmpl(22)=1           ! number of time ranges
-      ipdstmpl(23)=0           ! total number of data values missing
+      ipdstmpl(23)=255         ! total number of data values missing
       ipdstmpl(24)=iptable(12) ! average or accumulation
       ipdstmpl(25)=2  
       ipdstmpl(26)=1
       ipdstmpl(27)=1
-      ipdstmpl(28)=1
-      ipdstmpl(29)=1
+      ipdstmpl(28)=255
+      ipdstmpl(29)=0
       ipdstmpl(30)=0
       endif
 
