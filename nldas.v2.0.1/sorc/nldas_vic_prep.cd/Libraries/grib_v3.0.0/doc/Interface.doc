@@ -1,0 +1,589 @@
+Interface.doc, as of Tue Apr 23, 1998
+
+Not included are the following functions:
+  C. function:  Expand_gribhdr
+  A. function:  FTP_getfile
+  A. function:  gbyte
+  B. function:  gbyte_quiet
+  A. function:  gribgetbds
+  A. function:  gribgetbms
+  A. function:  gribgetgds
+  A. function:  gribgetpds
+  A. function:  gribputbds
+  A. function:  gribputgds
+  B. function:  Create_inpLambert
+  C. function:  Create_inpPolar
+  D. function:  create_inpLatlon
+  E. function:  Inp2Grib_Lambert
+  F. function:  Inp2Grib_PolarSt
+  G. function:  Inp2Grib_Latlon
+  A. function:  gribputpds
+  B. function:  create_inpPDS
+  C. function:  Inp2Grib_PDS
+  A. function:  ld_grib_origctrs
+  A. function:  pack_spatial
+  B. function   grib_local_ibm
+  C. function:  grib_ibm_local
+  A. function:  upd_child_errmsg
+
+ 
+ 
+-rw-r--r--        6380 Jun 25  1997 ../libsrc/apply_bitmap.c
+++++ FILENAME:  ../libsrc/apply_bitmap.c  
+********************************************************************
+ A. FUNCTION:  apply_bitmap
+       apply the bitmap to the float array.  The input float array is
+       expanded and filled with 'fill_value' in places where data
+       points are missing.
+    INTERFACE:
+      int  apply_bitmap (bms, pgrib_data, fill_value, bds_head, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  BMS_INPUT *bms;
+           pointer to the internal BitMap header structure;  bit set means
+           datapoint is present, bit clear means datapoint is missing.
+     (I&O) float **pgrib_data;  
+           pointer to Data that was unpacked from BDS's bitstr;  Incoming
+           size is bms->ulbits_set or (ROW*COL - #missingpts) elements;
+      (I)  float fill_value;    
+           float value used for missing datapoints in expanded array;
+      (O)  BDS_HEAD_INPUT *bds_head; 
+           attribute 'ulGrid_size' to be updated;
+      (O)  char *errmsg;
+           Empty array that's returned filled if error occurred; 
+    RETURN CODE:
+      0>  Success; float **pgrib_data probably have been expanded, OR
+          Predefined bitmap used, no action taken (float array unchanged);
+      1>  NULL bitmap encountered, errmsg filled;
+      2>  Error Mallocing space for data array, errmsg filled;
+      3>  Tried to access more than available in message, errmsg filled;
+      4>  No bits set in BMS, errmsg filled;
+*********************************************************************
+ 
+ 
+ 
+-rw-r--r--        5132 Jun 25  1997 ../libsrc/display_gribhdr.c
+++++ FILENAME:  ../libsrc/display_gribhdr.c  
+*********************************************************************
+ A. FUNCTION:   display_gribhdr
+      do a byte dump for each of the defined GRIB Sections in the 
+      GRIB message currently stored in the Grib Header struct.
+    INTERFACE:       
+       void display_gribhdr (gribhdr)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  GRIB_HDR *gribhdr;
+           holds Grib header info to be printed to standard output;
+    
+    RETURNS:  nothing;  
+*********************************************************************
+ 
+ 
+ 
+-rw-r--r--        7850 Feb 22 15:46 ../libsrc/grib_dec.c
+++++ FILENAME:  ../libsrc/grib_dec.c  
+********************************************************************
+ A.  FUNCTION:  grib_dec
+     decode a Gridded Binary (GRIB edition 1) format message
+    INTERFACE:
+      int grib_dec (curr_ptr, pds, gds, bds_head, bms, ppgrib_data, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *curr_ptr;
+           pointer to block containing GRIB message to decode;
+      (O)  PDS_INPUT  *pds ;
+           to be filled with decoded Product Defn Section info;
+      (O)  grid_desc_sec  *gds;
+           to be filled with decoded Binary Data Section info;
+      (O)  BDS_HEAD_INPUT *bds_head;
+           to be filled with decoded Binary Data Section info;
+      (O)  BMS_INPUT *bms;
+           to be filled with decoded Bitmap Section info;
+      (O)  float **ppgrib_data;
+           points to NULL upon entry; upon successful exit, points to newly
+           malloced Float array filled with unpacked and restored data;
+      (O)  char *errmsg;
+           Empty array, Returned filled if error occurred;
+     RETURN CODE:
+        0> Success, **ppgrib_data now points to a block containing
+           the unpacked & restored data (float);
+        1> Fail: first 4 bytes of curr_ptr is not 'GRIB'
+        2> Fail: last 4 bytes of curr_ptr is not '7777'
+        3> Fail: not Grib Edition 1
+        4> Fail: unknown projection type;
+**********************************************************************
+ 
+ 
+ 
+-rw-r--r--       19620 Feb 20 09:40 ../libsrc/grib_enc.c
+++++ FILENAME:  ../libsrc/grib_enc.c  
+***************************************************************************
+ A.  FUNCTION:  grib_enc
+        to encode a GRIB Edition 1 message using the three
+        input internal structures (DATA_INPUT, USER_INPUT, GEOM_IN),
+        and the Floating point data array;  
+        It's ok for Float array to be null if Grib Hdr shows that
+        it contains a predefined BDS;  that case, just exits w/ no errs;
+    INTERFACE:
+      int grib_enc (Data_Input, User_Input, Geom_In, pfData_Array, gh, errmsg)
+      
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  DATA_INPUT Data_Input;
+           Structure containing input field information.  
+      (I)  USER_INPUT User_Input;
+           Structure containing encoder configuration data.
+      (I)  GEOM_IN Geom_In;
+           Structure containing grid geometry description.
+    (I&O)  float *pfData_Array;
+           array of float data to be packed and stored in the Binary Data 
+           Section.  Float array may be Null if the Grib Header already
+           contains a Binary Data Section in its attribute 'entire_msg'.
+           That case is referred to as the 'Shuffle Mode' which results
+           in the encoder to only create the sections which are not already
+           in entire_msg;  
+           Note: non-null data array will be returned with the data being 
+           scaled up by the Decimal Scale Factor.
+    (I&O)  GRIB_HDR *gh;
+           Pre-malloced structure used to hold the encoded GRIB message 
+           and its info.  It contains a large array to hold the encoded
+           message, pointers to each of the Section along with their length,
+           and a flag 'shuffled' which determines how the message is encoded.
+           If 'shuffled' is zero upon entry, all 6 sections will be created 
+           and array (float *pfData_Array) must contain the float data.
+           If 'shuffled' is set upon entry, there is already one or more
+           sections in Entire_msg;  Each of these pre-included sections
+           sections will have a Non-Null pointer & a non-Zero length. 
+           The encoder will then only create the missing sections and
+           append them at the end of the existing sections in array
+           'entire_msg', hence these sections may not be in the proper 
+           order expected by GRIB.
+      (O)  char *errmsg
+           Empty array, returned filled if error occurred;
+    RETURN VALUE:  
+       0>  no errors;   
+           GRIB_HDR is returned with the encoded message in 'entire_msg',
+           w/ total message length in msg_length,
+           w/ pointers to each defined Grib Header Sections in
+           ids_ptr, pds_ptr, gds_ptr, bms_ptr, gds_ptr, eds_ptr,
+           and each section length in ids_len, pds_len, gds_len, bms_len,
+           bds_len, eds_len;  Note that the sections may not be in order if
+           the 'shuffled' bit is set;
+       1>  failed,  msg in errmsg;
+***************************************************************************/
+ 
+ 
+ 
+-rw-r--r--       18915 Dec 15 08:29 ../libsrc/grib_seek.c
+++++ FILENAME:  ../libsrc/grib_seek.c  
+*********************************************************************
+ A.  FUNCTION: grib_seek
+       search the input file starting at the given offset for a GRIB 
+       message.  If found, return it in GRIB_HDR structure.
+    INTERFACE:
+       int grib_seek (InFile, offset, Read_Index,  gh, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *InFile;
+           name of input file to search for message;
+     (I&O) long  *offset;
+           number of bytes to skip from the beginning of file;
+           gets updated upon leaving to absolute #bytes from beginning of
+           file to beginning of message found;
+      (I)  int  Read_Index; 
+           if set, only proceed if 'GRIB' starts exactly at the given 
+           byte offset;
+      (O)  GRIB_HDR *gh;
+           empty upon entry;  to hold the Message found and its info;
+      (O)  char *errmsg;
+           empty array, only filled if error occurred;
+    RETURN CODE:  
+      0> no errors, may or may not have a valid message;
+	  If no Msg was Found: 
+          a)  errmsg will hold the Warning msg;
+	   If a valid Msg was Found: 
+	   a) long *offset: if succesful, gets updated to absolute 
+             beginning of Mesg;
+          b) struct GRIB_HDR holds its info:
+            entire_msg:  is assigned to newly MAlloced 
+                    unsigned char * array to hold entire message;
+	     msg_length:  size of entire_msg array in bytes;
+	     ids_len, pds_len, gds_len, bms_len, bds_len, eds_len:
+                    size of each defined sections in bytes;
+            ids_ptr:  pts to message's Ident Data Sect;
+            pds_ptr:  pts to message's Prod Defn Sect;
+            gds_ptr:  pts to message's Grid Defn Sect;
+            bms_ptr:  pts to message's Bitmap Defn Sect;
+            bds_ptr:  pts to message's Binary Data Sect;
+            eds_ptr:  pts to message's End Data Sect;
+         c) errmsg remains empty;
+      1> fseek/fread error, all ptrs in grib_hdr set to null; errmsg filled;
+      2> got end of file, all ptrs in grib_hdr set to null; errmsg filled;
+      3> Null entire_msg pointer; errmsg filled;
+      4> unable to open input file; errmsg filled;
+*********************************************************************
+ 
+ 
+ 
+-rw-r--r--        5263 Dec 15 09:17 ../libsrc/gribhdr2file.c
+++++ FILENAME:  ../libsrc/gribhdr2file.c  
+***********************************************************************
+ A.  FUNCTION  gribhdr2file
+       write out the Grib message stored in GRIB_HDR struct to external file;
+       if the 'shuffle' flag is set, write each individual section out, else
+       write 'entire_msg' all at once;
+               
+    INTERFACE:
+       int    gribhdr2file (gh, fn, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I) GRIB_HDR *gh    holds the GRIB message to be written out
+      (I) char *fn        name of file to write to (includes absolute path)
+      (O) char *errmsg    array returned empty unless error occurred;
+     RETURN CODE:
+     0>  no errors,  GRIB file successfully created;
+     1>  error; errmsg is filled;
+***********************************************************************
+ 
+ 
+ 
+-rw-r--r--        1617 Jun 25  1997 ../libsrc/hdr_print.c
+++++ FILENAME:  ../libsrc/hdr_print.c  
+ 
+*******************************************************************
+ A. FUNCTION:  hdr_print
+      print specified number of bytes from the block provided.
+      does not require Debug flag to be set;
+    INTERFACE:
+      void  hdr_print (title, block, bytestoprint)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *title;		Title string to print
+      (I)  unsigned char *block;       Block whose content to print
+      (I)  int bytestoprint;           Number of bytes to print 
+    RETURN CODE:   none;
+*******************************************************************
+
+
+ 
+-rw-r--r--        2318 Jan 22 09:54 ../libsrc/init_dec_struct.c
+++++ FILENAME:  ../libsrc/init_dec_struct.c  
+************************************************************************
+ A. FUNCTION:  init_dec_struct
+       initializes the four internal Decoder structures 
+    
+    INTERFACE:
+       void init_dec_struct ( pds, gds, bms, bds_head)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (O)  PDS_INPUT      *pds;      internal PDS struct to be initialized
+      (O)  grid_desc_sec  *gds;      internal GDS struct to be initialized
+      (O)  BMS_INPUT      *bms;      internal BMS struct to be initialized
+      (O)  BDS_HEAD_INPUT *bds_head; internal BDS struct to be initialized
+    RETURN CODE:  none
+************************************************************************
+
+
+ 
+-rw-r--r--        1612 Jun 25  1997 ../libsrc/init_enc_struct.c
+++++ FILENAME:  ../libsrc/init_enc_struct.c  
+***********************************************************************
+ A. FUNCTION:  init_enc_struct
+       initializes structures DATA_INPUT and GEOM_IN
+    INTERFACE:
+       void init_enc_struct (data_input, geom_in, user_input)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (O) DATA_INPUT *data_input;    encoder struct to be initialized
+      (O) GEOM_IN  *geom_in;         encoder struct to be initialized
+      (O) USER_INPUT *user_input;    encoder struct to be initialized
+      RETURN CODE:   none
+***********************************************************************
+ 
+ 
+ 
+-rw-r--r--        8458 Nov  4 11:36 ../libsrc/init_gribhdr.c
+++++ FILENAME:  ../libsrc/init_gribhdr.c  
+***************************************************************************
+ A. FUNCTION  init_gribhdr
+       Allocates storage for Grib Header and its entire_msg and initialize
+       every of its attributes.
+    INTERFACE:
+       int     init_gribhdr (ppgrib_hdr, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (O)  GRIB_HDR **ppgrib_hdr;
+           Grib Header structure, Null upon entry;  Returns pointing to a 
+           newly created storage.  Its attribute 'entire_msg' will point
+           to a block of size indicated in 'abs_size' (initially set to
+           DEF_MSG_LEN bytes, see grib.h).  'entire_msg' may later be 
+           expanded by other functions if required, but 'abs_size' must
+           be updated to the expanded byte length.
+      (O)  char *errmsg;
+           empty array, returned filled if error occurred;
+    RETURNS:  
+     0>  no error; storage for grib header and its entire_msg array created
+         and cleared;  msg_length and all section lengths are set to zero, 
+         all section pointers are Null; abs_size is set to DEF_MSG_LEN;
+         'shuffled' flag is set to zero;
+     1>  failed, see errmsg;
+***************************************************************************
+***************************************************************************
+ B. FUNCTION:  free_gribhdr
+      to free up storage of Grib Header structure and all its attributes.
+    INTERFACE:
+      void    free_gribhdr (ppgrib_hdr)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (O)  GRIB_HDR **ppgrib_hdr;
+           Grib Header structure whose storage is released;
+    RETURN CODE:  none;
+***************************************************************************
+ 
+ 
+-rw-r--r--        1167 Aug 27  1997 ../libsrc/init_struct.c
+++++ FILENAME:  ../libsrc/init_struct.c  
+***********************************************************************
+ A. FUNCTION:   init_struct
+       initializes structures DATA_INPUT and GEOM_IN
+    INTERFACE:
+       void init_struct (generic, size)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (O)  void    *generic;   address of block to be cleared out
+      (I)  int     size;       size of block in bytes
+    RETURN CODE:   none
+***********************************************************************
+ 
+ 
+ 
+-rw-r--r--       26458 Feb 18 19:39 ../libsrc/ld_dec_lookup.c
+++++ FILENAME:  ../libsrc/ld_dec_lookup.c  
+*********************************************************************
+ A.  FUNCTION:      ld_dec_lookup
+        This function reads in the information from an external Lookup
+        table (ie: g1tab_2.1).  This info is used to convert
+        from the Database's parameter names to the GRIB Code Numbers.
+    INTERFACE:
+       int ld_dec_lookup (lookup_fn,  errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *lookup_fn
+           Name of Lookup file to read from (ie:  /abspath/g1tab_128_2.1)
+      (O)  char *errmsg
+           empty array, returned filled if error occurred;
+     RETURN CODE:
+        0>  successful, the 4 database tables Filled;
+        1>  file open error or got error/eof while reading;  errmsg filled;
+*********************************************************************
+ 
+ 
+ 
+-rw-r--r--       21582 Feb 10 09:00 ../libsrc/ld_enc_input.c
+++++ FILENAME:  ../libsrc/ld_enc_input.c  
+********************************************************************
+ A. FUNCTION:  ld_enc_config
+      fill struct holding user's input from config_fn that
+      is passed in by user
+    INTERFACE:
+      int     ld_enc_config (config_fn, User_Input, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *config_fn;         name of file to load from;
+      (O)  USER_INPUT *User_Input;  filled with data read from file;
+      (O)  char *errmsg             returned filled if error occurred;
+    RETURN CODE:   
+       0>  success, file is read and closed, user_input is filled 
+       1>  error opening file;  errmsg filled;
+       2>  failed to get all expected arguments; errmsg filled;
+       3>  ferror in file; errmsg filled;
+*********************************************************************/
+********************************************************************
+ B. FUNCTION:  ld_enc_ieeeff
+       load user's pre-malloced float array with data from
+       binary flat file passed in by user (ie:  FF*);
+    INTERFACE:
+       int     ld_enc_ieeeff (ieee_fn, farr, elements, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I) char *ieee_fn   name of IEEE Flat file (w/fullpath) to read
+      (O) float *farr     pre-malloced array to store data from read from file
+      (I) int elements;   number of float elements to read from file;
+      (O) char *errmsg    returned filled if error occurred;
+    RETURN CODE:   
+       0>  success, file is read and closed, float arr is filled 
+       1>  error opening file; errmsg filled;
+       2>  failed to get all expected elements;  errmsg filled;
+       3>  incoming float array is null;  errmsg filled;
+*********************************************************************/
+********************************************************************
+ C.  FUNCTION:  ld_enc_ffinfo
+      fill DATA_INPUT struct from file whose name is passed in
+    INTERFACE:
+      int  ld_enc_ffinfo (ieee_info_fn, Data_Input, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *ieee_info_fn      name of config info file to load
+      (O)  DATA_INPUT *Data_Input  to be filled with data read from config file
+      (O)  char *errmsg            filled if error occurred;
+     RETURN CODE:   
+       0;  success, file is read and closed, struct is filled 
+       1:  error opening file; 
+       2:  failed to get all expected arguments;
+       3:  Ferror;
+*********************************************************************/
+********************************************************************
+ D.  FUNCTION:  ld_enc_geomfile
+       fill GEOM_IN struct from file whose name is passed in.
+     
+    INTERFACE:
+      int     ld_enc_geomfile (geom_fn, Geom_In, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *geom_fn          name of geom info file to load
+      (O)  GEOM_IN *Geom_In       to hold geom info read from file 
+      (O)  char  *errmsg          returned filled if error occurred
+     RETURN CODE:   
+       0>  success, file is read and closed, struct is filled 
+       1>  error opening file;  errmsg filled;
+       2>  failed to get all expected arguments; errmsg filled;
+       3>  Ferror; errmsg filled;
+*********************************************************************
+ 
+ 
+ 
+-rw-r--r--        2353 Aug 27  1997 ../libsrc/make_default_grbfn.c
+++++ FILENAME:  ../libsrc/make_default_grbfn.c  
+***************************************************************************
+ A.  FUNCTION:   make_default_grbfn
+        build and return default filename for current message to be encoded
+        using the information from structures DATA_INPUT and USER_INPUT.
+    INTERFACE:
+      void  make_default_grbfn (DATA_INPUT di, USER_INPUT ui, char *default_fn)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I) DATA_INPUT  di;     contains info of msg to be encoded
+      (I) USER_INPUT  ui;     contains the required chCase_id
+      (O) char *default_fn;   empty string atleast 42 characters long
+     RETURN CODE: none; default_fn string contains name with format
+       'Mid_Gid_yyyymmddhhtau_PIndx_Lid.lvl1.c.grb';
+***************************************************************************
+ 
+ 
+ 
+-rw-r--r--    user       30433 Sep 10 09:56 make_grib_log.c
+++++ FILENAME:  make_grib_log.c  
+*********************************************************************
+ A. FUNCTION: make_grib_log
+      Produces debug file GRIB.log from the GRIB message in the Grib Header 
+    INTERFACE:
+      int   make_grib_log (input_fn, lookup_fn, msg_length, offset,
+                           pds, gds, bds, bms, grib_data, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I) char *input_fn;            name of input GRIB file 
+      (I) char *lookup_fn;           name of Lookup file, nil if not used 
+      (I) unsigned long msg_length;  total length of GRIB message
+      (I) long offset;               starting location of GRIB message in bytes
+      (I) PDS_INPUT pds;             product definition section structure
+      (I) grid_desc_sec gds;         grid description section structure
+      (I) BDS_HEAD_INPUT bds;        binary data section header structure
+      (I) BMS_INPUT bms;             bit map definition section structure
+      (I) float *grib_data;          array of decoded data
+     ACCESSES GLOBAL VARS:
+        int UseTables;
+            set to one if lookup table used
+        CTRS_DEFN  db_ctr_tbl[NCTRS];
+            predefined array holding Originating Center info
+        PARM_DEFN db_parm_tbl [MAX_PARM_TBLS * NPARM];
+            predefined arr of Parameter info 
+        LVL_DEFN db_lvl_tbl [NLVL];
+            predefined arr of Level info struct
+        MODEL_DEFN db_mdl_tbl [NMODEL];
+            predefined arr of Model info struct
+        GEOM_DEFN db_geom_tbl [NGEOM];
+            predefined arr of Geometry info struct
+     RETURN CODE:  
+       0> no errors; file GRIB.log has been created;
+       1> error, errmsg filled;
+*********************************************************************
+ 
+
+-rw-r--r--        3403 Dec 15 08:53 ../libsrc/map_lvl.c
+++++ FILENAME:  ../libsrc/map_lvl.c  
+***********************************************************************
+ A. FUNCTION:  map_lvl
+       Map the given Level_type to its appropriate usLevelid, scale up the
+       Level_1 and Level_2 to GRIB unit and also return the Scale Factor, 
+       Reference.
+    INTERFACE:
+       int map_lvl (lvl_type, data_input, lvl_scl_fctr, lvl_reference, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)   char *lvl_type;
+            name of Level to look for in the array of Level structures;
+      (I&O) DATA_INPUT *data_input;
+            structure holding data pertaining to current message required by
+            the encoder;  Three of its attributes get filled (usLevel_id, 
+            nLvl_1, nLvl_2);
+      (O)   float *lvl_scl_fctr, float *lvl_reference;
+            numbers needed to scale the Level up to GRIB unit.
+            multiply the level value by the Scale Factor, then add to the
+            Reference to convert to GRIB unit;
+      (O)   char *errmsg;
+            empty array, returned filled if error occurred;
+      RETURN CODE:
+        0: success, DATA_INPUT filled, fbuff may have changed;
+        1: parameter not found, errmsg filled; 
+***********************************************************************
+ 
+ 
+ 
+-rw-r--r--        4399 Dec 15 09:03 ../libsrc/map_parm.c
+++++ FILENAME:  ../libsrc/map_parm.c  
+***********************************************************************
+ A. FUNCTION:  map_parm
+      Map the given Parm_name to its appropriate usParm_id and usParm_sub
+      within the Parameter Lookup table, and also return its
+      Scale Factor and Reference which the caller can apply to the
+      float dta at a later time.
+    INTERFACE
+      int  map_parm (parm_name, data_input, parm_scl, parm_ref, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  char *parm_name
+           Name of Parameter to look for in the array of Parameter structs
+      (I&O) DATA_INPUT *data_input
+           attributes (usParm_id, usParm_sub_id, nDec_sc_fctr) are filled;
+      (O)  float *parm_scl       
+           used along with parm_ref to convert data to GRIB unit
+      (O)  float *parm_ref       
+           used along with parm_scl to convert data to GRIB unit
+                      
+    RETURN CODE:
+      0> success, DATA_INPUT, parm_scl and parm_ref filled 
+      1> parameter not found, errmsg filled; 
+***********************************************************************
+ 
+ 
+ 
+-rw-r--r--        9514 Feb 24 10:07 ../libsrc/prt_badmsg.c
+++++ FILENAME:  ../libsrc/prt_badmsg.c  
+*************************************************************************
+ A.  FUNCTION:  prt_badmsg
+     Print out as much information as possible from the GRIB message
+     currently in GRIB_HDR structure.  This may be an erroneous or
+     a partial message.
+    INTERFACE:
+      int  prt_badmsg (gh, errmsg)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I)  GRIB_HDR *gh;
+           pointer to Grib header structure.
+      (O)  char *errmsg;
+           Empty array, Returned filled if error is found;
+     RETURN CODE:
+        0> decoded message without any errors; 
+        1> error, errmsg buffer filled;
+**********************************************************************
+ 
+ 
+ 
+-rw-r--r--    user       15408 Sep 10 09:46 prt_inp_struct.c
+++++ FILENAME:  ../libsrc/prt_inp_struct.c  
+***********************************************************************
+ A. FUNCTION:  prt_inp_input
+      to print content of the Internal Grib structures
+    INTERFACE:
+      void  prt_inp_struct (pds, gds, bms_input, bds_head_input, ppfarr)
+    ARGUMENTS (I=input, O=output, I&O=input and output):
+      (I) PDS_INPUT *pds;                
+          internal Product Defn Section struct to print
+      (I) grid_desc_sec  *gds;  
+          internal Grid Defn struct to print
+      (I) BMS_INPUT *bms_input;          
+          internal Bitmap Section  to print
+      (I) struct BDS_HEAD_INPUT *bds_head_input; 
+          internal 11-byte hdr of Binary Data Section to print
+      (I) float **ppfarr;    
+          unpacked & restored float data array to print
+    RETURN CODE: none
+***********************************************************************

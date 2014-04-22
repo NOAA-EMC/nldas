@@ -1,0 +1,54 @@
+                              GRIB LIBRARY v.3.0
+                              ~~~~~~~~~~~~~~~~~~
+        Developed at Science Applications International Corporation (SAIC)
+                                 Monterey, CA
+
+        Sponsored by Naval Research Laboratory (NRL), Marine Meteorology Division
+                                 Monterey, CA
+
+        with funding from the Defense Modeling and Simulation Office (DMSO) for
+        the Master Environmental Library (MEL) and Environmental Effects in
+        Distributed Interactive Simulation (E2DIS) projects.
+
+
+              Developers:   Steve Lowe (SAIC) lowe@nrlmry.navy.mil
+                            Louis Hembree (NRL)
+                            Alice Nakajima (SAIC)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                               DISCLAIMER
+                               ~~~~~~~~~~
+                The software is being furnished without cost and,
+        therefore, "with all faults and as is."  The Naval Research Laboratory
+        Marine Meteorology Division and Science Applications International
+        Corporation, do not provide any warranties, express or implied, that the
+        software as provided will meet your requirements or that its operation
+        will be uninterrupted or error free.
+
+        By making the software available without cost from the Naval Research
+        Laboratory Marine Meteorology Division and Science Applications
+        International Corporation, there are no implied warranties of
+        merchantability or fitness for a particular purpose nor are there any
+        obligations to provide any software support.  There is no warranty that
+        the software is free from defects in materials or workmanship.  There is
+        no warranty that the software will perform substantially in accordance
+        with any specifications set forth in the documentation.  There is no
+        obligation on the part of the Naval Research Laboratory Marine
+        Meteorology Division and Science Applications International Corporation
+        to replace any software or hardware that it may be installed on.
+
+        The Naval Research Laboratory Marine Meteorology Division and Science
+        Applications International Corporation shall not be liable for special,
+        incidental, consequential, indirect or other similar damages arising
+        from the use of the software, even if the Naval Research Laboratory
+        Marine Meteorology Division and Science Applications International
+        Corporation have been advised of the possibility of such damages.
+
+        In no event will the Naval Research Laboratory Marine Meteorology
+        Division and Science Applications International Corporation be liable
+        for loss of data, lost profits, indirect damages arising from the use of
+        the program, however caused and on any theory of liability.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
