@@ -321,7 +321,7 @@ FC := $(USER_FC)
 endif
 
 clean:
-	$(RM) -f *.o *.mod *.stb  $(MODEL_EXEDIR)/$(EXENAME)
+	$(RM) -f *.o *.d *.mod *.stb  $(MODEL_EXEDIR)/$(EXENAME)
 
 realclean:
 	$(RM) -f *.o *.d *.mod *.stb  $(MODEL_EXEDIR)/$(EXENAME)
