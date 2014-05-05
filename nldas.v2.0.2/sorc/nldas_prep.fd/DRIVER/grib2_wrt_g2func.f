@@ -188,7 +188,7 @@
       ipdstmpl(22)=1           ! number of time ranges
       ipdstmpl(23)=255         ! total number of data values missing
       ipdstmpl(24)=iptable(12) ! average or accumulation
-      ipdstmpl(25)=2  
+      ipdstmpl(25)=1  
       ipdstmpl(26)=1
       ipdstmpl(27)=1
       ipdstmpl(28)=255
@@ -226,4 +226,5 @@
       call wryte(ifilw, lengrib, cgrib)
 
       end subroutine grib2_wrt_g2func 
+
 
