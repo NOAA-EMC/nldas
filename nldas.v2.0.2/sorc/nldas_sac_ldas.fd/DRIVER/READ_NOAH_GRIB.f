@@ -35,7 +35,7 @@
       jpdt=-9999
 !for pdt, define catogory, parameter and level (e.g., potevap)    
       jpdt(1)=1        
-      jpdt(2)=199      
+      jpdt(2)=40      
       jpdt(10)=1     ! 
       jpdt(11)=0       
       jpdt(12)=0
