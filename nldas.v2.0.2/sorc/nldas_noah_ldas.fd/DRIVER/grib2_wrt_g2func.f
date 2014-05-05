@@ -187,7 +187,7 @@
       ipdstmpl(22)=1           ! number of time ranges
       ipdstmpl(23)=255         ! total number of data values missing
       ipdstmpl(24)=iptable(12) ! average or accumulation
-      ipdstmpl(25)=1  
+      ipdstmpl(25)=1           ! 1: analysis, 2: forecast from table 4.11
       ipdstmpl(26)=1
       ipdstmpl(27)=1
       ipdstmpl(28)=255
