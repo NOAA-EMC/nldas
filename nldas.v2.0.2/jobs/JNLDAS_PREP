@@ -32,7 +32,7 @@ if [ $RUN_ENVIR = prod -a $envir != prod ]; then
   export SENDDBN=${SENDDBN:-YES}
   export jlogfile=${jlogfile:-/com/logs/${envir}/jlogfile}
   export DATA_IN=${DATA_IN:-/tmpnwprd2}
-  export DBNROOT=/nwprod/spa_util/fakedbn
+# export DBNROOT=/nwprod/spa_util/fakedbn
 fi
 
 export PS4='$SECONDS + '
@@ -64,10 +64,10 @@ export RUN=${RUN:-nldas}
 # Define alert_type
 ###########################
 if [ $RUN_ENVIR = prod -a $envir != prod ]; then
-  export alert_type=NLDAS_PREP_PARA
+  export alert_type=NLDAS_GB2_PARA
 fi
 
-export alert_type=${alert_type:-NLDAS_PREP}
+export alert_type=${alert_type:-NLDAS_GB2}
 
 ####################################
 # Determine Job Output Name on System
