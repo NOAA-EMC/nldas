@@ -37,13 +37,23 @@ export  RUNSTARTDATE_DATA=`$utilscript/finddate.sh $RUNSTARTDATE d-2`
 if [ $RUNSTARTDATE_DATA -le $RUNENDDATE ]; then
   echo "CMD: nldas_get_data.sh $RUNSTARTDATE_DATA $RUNENDDATE"
   $USHnldas/nldas_get_data.sh $RUNSTARTDATE_DATA $RUNENDDATE 
-  #$USHnldas/nldas_get_data_test.sh $RUNSTARTDATE_DATA $RUNENDDATE 
+  #$USHnldas/nldas_get_data_test.sh $RUNSTARTDATE_DATA $RUNENDDATE
+else
+  echo " $RUNSTARTDATE_DATA is greater than $RUNENDDATE"
+  echo " check $LASTNARRFILE file RUNSTARTDATE should be less/eq than ${PDYm4} "
+  echo " $job exiting... "
+  export err=99; err_chk;
 fi
 
 #  to generate NLDAS-2 forcing 
 if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
   echo "CMD: nldas_prep.sh $RUNSTARTDATE $RUNENDDATE"
   $USHnldas/nldas_prep.sh $RUNSTARTDATE $RUNENDDATE
+else
+  echo " $RUNSTARTDATE is greater than $RUNENDDATE"
+  echo " check $LASTNARRFILE file RUNSTARTDATE should be less/eq than ${PDYm4} "
+  echo " $job exiting... "
+  export err=99; err_chk;
 fi
 
 #####################################################################

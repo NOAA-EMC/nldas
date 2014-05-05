@@ -29,6 +29,11 @@ echo "RUNNING THROUGH: $RUNENDDATE"
 
 if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
   $USHnldas/nldas_routing.sh $RUNSTARTDATE $RUNENDDATE 
+else
+  echo " $RUNSTARTDATE is greater than $RUNENDDATE"
+  echo " check $LASTNARRFILE file RUNENDDATE should be less/eq than ${PDYm5} "
+  echo " $job exiting... "
+  export err=99; err_chk;
 fi
 
 #####################################################################
