@@ -1,0 +1,20 @@
+# data/encoder_ex2.info
+#  this file holds info to be loaded into struct DATA_INPUT
+#  it is used by encoder example "encoder_ex2.c"
+#  Entries must appear 1 per line, only 1st column is processed
+#  Everything after '#' is considered as remarks
+#  Do not change the order of these lines, or remove/add new ones.
+#
+75      #Data_Input.usProc_id
+237     #Data_Input.usGrid_id
+11      #Data_Input.usParm_id
+0       #Data_Input.usParm_sub
+105     #Data_Input.usLevel_id
+2       #Data_Input.nLvl_1
+0       #Data_Input.nLvl_2
+1997    #Data_Input.nYear
+7       #Data_Input.nMonth
+1       #Data_Input.nDay 
+0       #Data_Input.nHour
+12      #Data_Input.usFcst_per1
+1       #Data_Input.nDec_sc_fctr

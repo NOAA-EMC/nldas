@@ -1,0 +1,97 @@
+README.greg	Greg O'Donnell [tempgd@hydro.washington.edu] June 2000
+
+**********************
+INTRO
+**********************
+
+This document contains details of code changes to the core VIC [ie as
+used at UW] for application to the LDAS project.
+The starting version of the code is VIC_4.0.0.
+
+All routines changed are detailed below. Changes to standard VIC files
+are enclosed by the following:
+
+/** Start of changes - NGMOD **/
+/** End of changes - NGMOD **/
+
+or
+
+/** Start of changes - JS **/
+/** End of changes - JS **/
+
+Note: there are in addition new VIC routines added.
+
+
+**********************
+LDAS SPECIFIC CHANGES
+**********************
+
+The following provides changes on modifications made to the VIC
+routine to run for LDAS.
+
+Met data changes
+----------------
+
+The met data for the LDAS data is provided by NCEP in grib files. The
+preprocessor ncep_forcing_pp should be run to convert these grib files
+to a format suitable for VIC.
+
+1) make_in_outfiles.c removed from vicNl.c
+   No longer open files on a cell by cell basis.
+
+2) open_ldas_files.c
+   Opens the met input files and the output files.
+
+3) get_ldas_global_param.c 
+   Get the LDAS required data from the global file.
+
+4) initialize_ldas_atmos.c
+   Replace initialize_atmos.c
+
+5) put_data_ldas
+   Replace put_data. write_data function call changes.
+
+The following have the rewind statement commented out.
+read_vegparam.c
+read_snowband.c
+
+Header Files
+------------
+
+An additional header file 'vicNl_ldas.h' is now included.
+
+Input Files
+------------
+
+Beyond the obvious changes to the met data files the following changes
+were implemented:
+
+1) soil file
+   The first column should be cell number, ie copy col2 to col1.
+   This is used to determine whether the cell is to be computed.
+
+**********************
+GENERAL BUGS
+**********************
+
+Below are general bug fixes - these should be applied to all versions
+of the code.
+
+1) In initialize_atmos_data.c
+   
+   if(atmos[rec].air_temp[i]>min) min = atmos[rec].air_temp[i];
+
+   should be replaced by
+
+   if(atmos[rec].air_temp[i]<min) min = atmos[rec].air_temp[i];
+
+   [ie the > sign is incorrect.]
+
+2) In make_in_outfiles.c the following lines should be commented out
+
+  /** Initial Model State Variables Read from File **/
+  if(options.INIT_STATE) {
+    infp->statefile = open_file(fnames.init_state, "r");
+  }
+
+  The opening of this file is dealt with in check_state_file.c.

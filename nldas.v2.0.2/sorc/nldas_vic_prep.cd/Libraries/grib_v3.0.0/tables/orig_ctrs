@@ -1,0 +1,11 @@
+GRIB Table 0 - Originating Center Definitions (Octet 5 of PDS)
+Code Figure    Model Name
+===========    ==========
+007            US Weather Service - National Meteorological Center (NMC)
+057            US Air Force - Air Force Global Weather Central
+058            Fleet Numerical Meteorology and Oceanography Center (FNMOC)
+059            NOAA Forecast Systems Laboratory (FSL)
+097            European Space Agency (ESA)
+098            European Centre for Medium Range Weather Forecasts (ECMWF)
+128            Naval Research Laboratory (NRL) Monterey, CA
+129            Center for Air/Sea Technology (CAST)

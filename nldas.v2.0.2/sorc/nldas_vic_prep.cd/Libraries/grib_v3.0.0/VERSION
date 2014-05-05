@@ -1,0 +1,3 @@
+08/22/97:  GRIB v.3.0B (original)
+09/09/97:  GRIB v.3.0B with minor changes to support make.tmpl
+12/16/97:  GRIB v.3.0B +config.os -make.tmpl +v5d

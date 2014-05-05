@@ -1,0 +1,86 @@
+
+This file shows what you need to do to test the included examples.
+
+After properly running the included "Install" script, verify that
+GRIB_ENV is defined in your environment and $GRIB_ENV/bin is part of your
+path (if not, do so now then log out and back in so the environment changes
+will take place).  
+
+Now  to test the included examples, you need to=
+1) goto the $GRIB_ENV/run directory;
+2) test the desired example by typing the text shown below:
+
+######################################################################
+prompt> encoder_ex1
+
+   	input= 	$GRIB_ENV/data/IEEE.input		   (ieee data)
+      	output= 075_237_1997070100012_0011_105.00002.0.grb  (GRIB file)
+
+######################################################################
+prompt> encoder_ex2
+
+	input = $GRIB_ENV/config/encoder.config		(config info)
+		$GRIB_ENV/data/encoder_ex2.geom		(geom info)
+		$GRIB_ENV/data/encoder_ex2.info		(field info)
+		$GRIB_ENV/data/IEEE.input		(ieee data)
+
+      	output= 075_237_1997070100012_0011_105.00002.1.grb  (GRIB file)
+
+######################################################################
+prompt> encoder_ex3  NORAPS2 ptmugu_61x51 $GRIB_ENV/data/encoder_ex3.list
+
+	input=  $GRIB_ENV/config/encoder.config		(config info)
+		$GRIB_ENV/tables/neons2grib.2.1		(lookup file)
+		$GRIB_ENV/data/ptmugu_61x51.geom	(geometry info)
+		$GRIB_ENV/data/encoder_ex3.list,    	(listing file)
+		which calls for IEEE files:
+		$GRIB_ENV/data/ieee.pres.msl.2.0.1997070100.000  
+		$GRIB_ENV/data/ieee.pres.msl.2.0.1997070100.012
+		$GRIB_ENV/data/ieee.wnd_ucmp.ht_sfc.10.0.1997070100.000
+		$GRIB_ENV/data/ieee.wnd_ucmp.ht_sfc.10.0.1997070100.012
+
+      	output= 016_054_1997070100000_0001_102.00002.3.grb (GRIB files)
+		016_054_1997070100000_0033_105.00010.3.grb
+		016_054_1997070100012_0001_102.00002.3.grb
+		016_054_1997070100012_0033_105.00010.3.grb
+
+######################################################################
+prompt> decoder_ex
+
+	input = $GRIB_ENV/data/GRIB0797.tar	(holds 6 GRIB messages)
+	output= decoder_ex.output		(text file displaying every
+						message's info & data values)
+
+######################################################################
+prompt> gribsimp -i $GRIB_ENV/data/GRIB0797.tar -d
+
+	input=  $GRIB_ENV/data/GRIB0797.tar	(holds 6 GRIB messages)
+	output= GRIB.log			(text file displaying msg info)
+		this can be compared to $GRIB_ENV/data/GRIB.test_d
+
+######################################################################
+prompt> gribsimp -i $GRIB_ENV/data/GRIB0797.tar -D
+
+	input=  $GRIB_ENV/data/GRIB0797.tar	(holds 6 GRIB messages)
+		$GRIB_ENV/tables/g1tab_58_2.0	(lookup file)
+
+	output= GRIB.log			(text file displaying msg info)
+		this can be compared to $GRIB_ENV/data/GRIB.test_D
+
+######################################################################
+prompt> getgribieee  $GRIB_ENV/data/getgribieee.list
+
+	input=  $GRIB_ENV/data/getgribieee.list, 	(listing file)
+		which calls for GRIB files:
+		$GRIB_ENV/data/058.223.geop_ht.isbr_lvl.100.0.1997081200.000
+		$GRIB_ENV/data/058.223.geop_ht.isbr_lvl.100.0.1997081200.012
+		$GRIB_ENV/data/058.223.dwpt_dprs.isbr_lvl.1000.0.1997081200.012
+	
+	output= files holding IEEE data of input GRIB files
+		058.223.geop_ht.isbr_lvl.100.0.1997081200.000.IEEE
+		058.223.geop_ht.isbr_lvl.100.0.1997081200.012.IEEE
+		058.223.dwpt_dprs.isbr_lvl.1000.0.1997081200.012.IEEE
+	
+	These output .IEEE files may be compared with the binary files created
+	by gribsimp option -o using the same input GRIB files.	
+
