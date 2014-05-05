@@ -111,13 +111,13 @@ C     DEFINE THE OUTPUT MASK FOR GRIB FILES.
       enddo
 C    for surface runoff
       jpdt1(1)=0
-      jpdt1(2)=193
+      jpdt1(2)=6
       jpdt1(10)=1     
       jpdt1(11)=0
       jpdt1(12)=0
 C     for baseflow
       jpdt2(1)=0
-      jpdt2(2)=192
+      jpdt2(2)=5
       jpdt2(10)=1     
       jpdt2(11)=0
       jpdt2(12)=0
