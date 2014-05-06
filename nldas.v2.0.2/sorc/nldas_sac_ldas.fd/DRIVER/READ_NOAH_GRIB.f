@@ -47,6 +47,7 @@
       call getgb2(lugb,0,j,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,k,gfld,iret)
       if ( iret.ne.0) then
             print *,' getgb2 error = ',iret
+            call errexit(iret)
       endif
      
       kf = gfld%ngrdpts
