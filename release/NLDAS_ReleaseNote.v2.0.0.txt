@@ -1,0 +1,34 @@
+Release Note:  nldas.v2.0.0
+V1.0.0 – release March, 2011
+EMC quasi-operation version
+V2.0.0 – release March 18, 2014
+New Implementation on WCOSS
+First implementation of the North American Land Data Assimilation System (NLDAS) is to enhance US operational drought monitoring and prediction capabilities and to support the National Integrated Drought Information System (NIDIS) over the Continental United States (CONUS) domain.
+Use NARR/RCDAS model data (radiation, 2 m air temperature and specific humidity, 10-m wind speed, surface pressure) for atmospheric forcing.
+Use observed precipitation forcing (gauge based, radar temporally disaggregated)
+Use bias-corrected downward shortwave radiation via satellite retrieved solar radiation (GOES)
+Four individual land surface models (NOAH, MOSAIC, VIC and SAC) are run in an uncoupled mode.  The spatial resolution is 0.125 degree and the temporal resolution is an hour.
+River-Routing model uses the surface runoff and baseflow output from the above four models and generates the hourly streamflow .
+Jobs/components that will be implemented:
+jnldas_prep
+jnldas_noah, jnldas_mosaic, jnldas_vic, jnldas_sac
+jnldas_rout_noah, jnldas_rout_mosaic, jnldas_rout_vic, jnldas_rout_sac
+Output from the models
+Forcing data in both grib1 and grib2 format
+Model output data in grib2 format
+Model restart files
+River streamflow data in grib2 format
+Computing resource information:
+This NLDAS system runs only once per day (12Z).
+Total runtime is about 50-60 minutes.
+All the jobs will be running in serial mode, and the whole system will use at most 3 processors during the runtime period.
+Total disk usage is about 700 Mb per day.
+Dissemination info:
+The forcing (only the grib2 format), model output data and the river streamflow data (all in grib2 format) will need to be sent out to the public.
+Primary Users:
+NIDIS
+US Drought Monitor
+NCEP Climate Prediction Center
+Other external users such as Princeton University, University of Washington, NWS/OHD, NASA/GSFC. COLA, Climate Cooperations.
+Archive to HPSS:
+All of the output data (including the restart files) will need to be archived to HPSS.
