@@ -1,7 +1,0 @@
-changes log for 'getgribieee'
-
-02/23/98 atn:  *prt_inp_struct calling interface;
-
-10/02/98:  upgraded OS from IRIX 6.2 to IRIX 6.5
-           upgraded C-compiler from 6.2 to 7.2.1
-
