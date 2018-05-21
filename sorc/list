@@ -1,0 +1,20 @@
+	git add   compile.sh
+	git add   nldas_mosaic_ldas.fd/make/MAKDEP/makdep
+	git add   nldas_rout.fd/nldas_rout
+	git add   nldas_vic_post.fd/nldas_vic_post
+	git add   nldas_vic_prep.cd/Libraries/grib_v3.0.0/bin/decoder_ex
+	git add   nldas_vic_prep.cd/Libraries/grib_v3.0.0/bin/encoder_ex1
+	git add   nldas_vic_prep.cd/Libraries/grib_v3.0.0/bin/encoder_ex2
+	git add   nldas_vic_prep.cd/Libraries/grib_v3.0.0/bin/encoder_ex3
+	git add   nldas_vic_prep.cd/Libraries/grib_v3.0.0/bin/getgribieee
+	git add   nldas_vic_prep.cd/Libraries/grib_v3.0.0/bin/gribsimp
+git add	cpc_precip_convert.fd/cpc_precip_convert
+git add	list
+git add	nldas_mosaic_ldas.fd/interp/polfixs.F90
+git add	nldas_mosaic_ldas.fd/make/nldas_mosaic_ldas
+git add	nldas_noah_ldas.fd/nldas_noah_ldas
+git add	nldas_prep.fd/nldas_prep
+git add	nldas_sac_ldas.fd/nldas_sac_ldas
+git add	nldas_vic_ldas.cd/dist_prec_ldas.c.fixed
+git add	nldas_vic_prep.cd/Libraries/grib_v3.0.0/lib/
+git add	nldas_vic_prep.cd/nldas_vic_prep
