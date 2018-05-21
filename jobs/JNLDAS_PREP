@@ -143,6 +143,15 @@ export LOGDIR=${LOGDIR:-/com/${NET}/${envir}/logdir}
 
 mkdir -m 775 -p $COMOUT $COMOUTp1 $LOGDIR
 
+# set cpc gauge and cmorph precip directory
+export DCOM_IN=${DCOM_IN:-/dcom/us007003}
+
+# set hourly stage2 precip directory
+export COMIN_HRLY=${COMIN_HRLY:-/com/hourly/prod}
+
+# set rcdas forcing directory
+export COMIN_RCDAS=${COMIN_RCDAS:-/com/rcdas/prod}
+
 env
 
 #############################################################

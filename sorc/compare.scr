@@ -1,0 +1,1 @@
+paste OUT_NO_INIT/SoilMoist_1_2000043013 OUT_INIT/SoilMoist_1_2000043013 OUT_INIT/Precip_2000043013 | awk '{print (NR-1)%72, $0}' | awk '{if($1==0)old=$3;if($1==71)new=$2;if($1==71)print old, new, old-new, $4}' | more        

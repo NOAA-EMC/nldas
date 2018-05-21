@@ -106,7 +106,8 @@ while [ $sdate -le $edate ]; do
    hh=00
    while [ $hh -le 23 ]
    do
-     val_cmorph=advt-8km-interp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
+     # JY - old name 201511: val_cmorph=advt-8km-interp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
+     val_cmorph=CMORPH_8KM-30MIN_${today}${hh}
      val_cmorph_new=advt-8km-intrp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
      cp -p $dir_cmorph/$val_cmorph $pcmorph/$val_cmorph_new
      hh=`expr $hh + 1`

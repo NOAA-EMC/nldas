@@ -1,0 +1,328 @@
+<html><body><pre>
+
+Wed Sep 20 14:55:29 EDT 2000
+----------------------------
+
+<b>LDAS version of the VIC Model</b>
+
+<font color=red><b>
+- look into LDAS macros in the code. do these relate to the output files only
+
+- look into bracketing all ldas specific stuff within LDAS macros and NOT using different ldas files
+
+- look into how the files relate to the pre- and post-processors
+
+- look into how the version and gmod's changes relate to standard version at UoW.
+
+- sort out notes in red below
+</b></font>
+
+Wed Aug 2 2000
+---------------
+
+<b>open_state_file.c: ldas specific change</b>
+   
+- removed the date from the state file name to ease its manipulation when VIC is
+  run in real-time at NCEP. <font color=red><b></b></font>
+
+Wed Sep 20 2000
+---------------
+
+<b>New LDAS Mask for Precip Inputs</b>
+
+- code updated to take into account the new LDAS mask
+- the new mask has the same converage as the original LDAS mask but 
+differentiates between USA, Canada and Mexico
+- the mask is required to enable the input precipitation to the VIC model
+to be extracted by location
+	- the input precipitation is derived from 2 sources
+		- global model predictions
+		- "stage4" precip derived from station data
+	- stage4 data are not consistently available in space and time but are more accurate as they are based on ground observations
+	- global model precip is available throughout space and time but are less accurate
+	- 
+	- the lack of station data in Mexico and Canada means that the stage4 data are less reliable in these regions, even than the global model data
+	- therefore the new mask is used to select the most reliable data for each location:
+		- use global model data at every location
+		- if within the USA and stage4 data exist, then use this instead
+		
+- the code has been updated to take into account the new mask
+	- code changes:
+		- vicNl_ldas.h: added EDAS precip (acpc1) to ldas_metfiles_struct and location (loc) array for grid cell to ldas_index_struct.
+		- open_ldas_metfiles.c: open EDAS precip met file
+		- process_masks.c: handles mask location values >= 1 and stores these numbers in a loc array of the ldas_index structure
+		- initalize_ldas_atmos.c: reads in EDAS precip data from file. uses normal precip data if the grid location (given by ldas_index.loc) is in the USA and EDAS precip if the grid is outside the USA. 
+		
+Tue Oct 3 2000
+---------------
+
+<b>Minor Code Changes</b>
+
+- Conversion factor from C to Kelvin is defined as a macro (#define KELVIN 273.15) in vicNl_def.h but not used throughout the code. Therefore replace all specific references to 273.15 with KELVIN:
+	- SnowPackEnergyBalance.c 
+	- StabilityCorrection.c
+	- initialize_ldas_atmos.c
+	- penman.c
+	- snow_intercept.c
+	- soil_conduction.c
+
+All Changes up to 10/23/00
+--------------------------
+
+<b>calc_rainonly.c: bug</b>
+
+- function for calculating the partitioning of precipitation between rainfall and snowfall based on the air temperature fails when air temp = MAX_SNOW_TEMP. In this case, rainfall = 0, and snowfall is set to 100% of precipitation which is incorrect. Function corrected so that all cases are handled correctly:
+	- comparison of air_temp and MAX_SNOW_TEMP changed from:
+	else if(air_temp > MAX_SNOW_TEMP) {
+	- to:
+	else if(air_temp >= MAX_SNOW_TEMP) {
+
+<b>dist_prec_ldas.c: global parameters passed to put_data_ldas.c</b>
+
+- global parameters MAX_SNOW_TEMP and MIN_RAIN_TEMP are passed to put_data_ldas.c so that the rainfall and snowfall fractions can be calculated and stored for output.
+
+<b>full_energy.c: variable uninitialised</b>
+
+- in the section which sets the surface descriptive variables and calculates the aerodynamic resistance, the variable roughness is not initialised when there is no vegetation (bare soil).
+
+<b>initialize_global.c: bug</b>
+
+- number of forcing types is hard-coded as 17 in this routine. Replace this value with N_FORCING_TYPES to ensure that no problems occur if more types are used in the future.
+
+<b>initialize_ldas_atmos.c: LDAS specific changes</b>
+
+- Changes made so that the cell location (USA, Canada, Mexico) determines the source of the precipitation forcing data used at a particular cell. If the cell is in USA then use the observed station derived data, else if this data is missing or the cell is located in Canada or Mexico then use the EDAS model predicted precip.
+
+- changes made:
+	- cell_location structure passed as an argument. This structure
+	  contains the location (USA=1, Canada=2, Mexico=3) of the current
+	  cell.
+	- EDAS model predicted precip read from file, in addition to the 			 original forcings.
+	- test location of the cell. If in USA then use observed station
+	  data, else if this data is missing or the cell is in Canada or
+	  Mexico, use the EDAS data.
+
+<b>initialize_snow.c: LDAS specific changes</b>
+
+- snow_melt array initialized to zero.
+
+<b>open_ldas_metfiles.c: LDAS specific changes</b>
+
+- EDAS precip file opened
+
+<b>open_state_file.c: state file name altered</b>
+
+- date removed from the state file name to ease its manipulation when VIC
+ is run in real-time at NCEP.
+ 
+<b>process_masks.c: LDAS specific changes</b>
+
+- Store the cell locations (USA=1, Canada=2 or Mexico=3) in the ldas_index structure
+
+<b>put_data_ldas.c: various LDAS output specific changes</b>
+
+- LDAS specific outputs calculated and stored in the output structure.
+
+<font color=red><i><b>Check that subsurface runoff is in the correct units - seems ok</b></i></font>
+
+<b>surface_fluxes.c: LDAS specific change</b>
+
+- store the current snow melt in the snow structure.
+
+<b>svp.c: bug</b>
+
+- function returns svp of zero if the input temperature is below -C_SVP. Otherwise the function fails and returns a non-sensical value. Note: this should have been fixed in the stabdard version with the use of the constant MIN_TDEW, but I don't think this was implemented.
+
+<b>write_atmosdata.c: bug</b>
+
+- removed line to close debug output files as the files are written to again with the data for the next cell.
+
+<b>vicNl_def.h: LDAS specific changes</b>
+
+- added melt member to snow_data_struct for storing snow melt as an output
+
+- added rainfall, snowfall, snow_melt[], snow_pack_temp[], soil_temp[], wetness_total, wetness_root to out_data_struct.
+
+<b>vicNl_ldas.h: LDAS specific changes</b>
+
+- added location macros (USA, Canada, Mexico) for precipitation mask
+
+- EDAS precipitation file pointer added to ldas_metfiles_struct
+
+- complete re-write of ldas_outfiles_struct to handle all LDAS required and original outputs.
+
+- added cell_loc pointer to ldas_index_struct to hold the cell location information.
+
+<b>read_initial_model_state_ldas.c: bug</b>
+
+- dry_time variable added to list of variables in fscanf statement
+
+- variables are read in from the restart state file in this fscanf statement, but original code didn't read in dry_time variable which meant an undefined value for dry_time and offset any any subsequent fscanf statements.
+
+<b>write_model_state_ldas.c AND read_initial_model_state_ldas.c: bug</b>
+
+- vic writes model state restart data to file in float format == %f == %.6, thus double type variables are truncated
+
+- on restart, these data are read back in with this loss of precision and so vic detects errors in subsequently called functions
+
+- e.g. redistribute_moisture_for_storm: test the moisture content of the current layer of the current cell against the max moisture. if their difference is greater than some small value (1e-12) then an error is flagged. if the current layer is saturated then the data in the file may be rounded up and so the error is likely to occur
+
+- solution:?????
+	- increase the size of the small value (macro SMALL in vicNl_def.h)
+	- write the restart data at full precision
+	- IDEALLY: the write format statements should be a function of the macro SMALL
+	  so that tests against SMALL never fail for data stored in restart files.  
+
+GMOD changes
+------------
+
+<b>calc_surf_energy_bal.c: bug</b>
+
+- SNOWING and FS_ACTIVE arguments changed from chars to ints to avoid cross-platform problems.
+
+<b>close_files.c: possible LDAS changes</b>
+
+<b>dist_prec_ldas.c: various LDAS specific and STATE changes</b>
+
+- included vicNl_ldas.h file
+
+- ldas_outfiles_struct, statehour and dry_time variables added to input args
+
+- model variables set if the first time step
+
+- various changes made to handle first timestep and state restarts
+
+- put_data function name changed to put_data_ldas
+
+- write_model_state_ldas function call added for writting state data
+
+<b>func_surf_energy_bal.c: bug</b>
+
+- SNOWING and FS_ACTIVE arguments changed from chars to ints to avoid cross-platform problems.
+
+<b>initialize_model_state_ldas.c: various LDAS specific and STATE changes</b>
+
+- included vicNl_ldas.h file
+
+- code change to deal with wet and dry fractions when reading in initial state data
+
+<b>make_dmy_ldas.c: enhancements and LDAS specific changes</b> 
+
+- slight modifications for use in the LDAS real time. 
+	- can run partial days.
+	- if both end date and nrecs are set the model exits.
+
+<b>open_state_file.c: enhancements</b>
+
+- header info written to state file
+
+<b>put_data_ldas.c: LDAS specific changes</b>
+
+- included vicNl_ldas.h file
+
+- outfiles_struct argument changed to ldas_outfiles_struct
+
+- write_ldas function replaced with write_data_ldas
+
+<b>read_snowband.c: a change</b>
+
+- rewind snowband file commented out
+
+<b>read_vegparam.c: a change</b>
+
+- rewind vegparam file commented out
+
+<b>vicNl.c: LDAS specific changes</b>
+
+- included vicNl_ldas.h file
+
+- removed obsolete structures:
+  /* outfiles_struct          outfiles; */
+  /* filenames_struct         builtnames; */
+
+- added extra LDAS variables:
+  ldas_metfiles_struct ldas_metfiles;
+  ldas_outfiles_struct ldas_outfiles;
+  ldas_option_struct   ldas_options;
+  ldas_index_struct    ldas_index;
+  int                  dry_time;
+  
+- call LDAS specific functions:
+   get_ldas_global_param
+   process_masks
+   
+- open ldas metfiles and output files by calling open_ldas_files
+
+- obsolete stuff removed concerning initial state file
+
+- implement code to use ldas_index.cell_num[] to tell which cells are to be run
+
+- make_in_and_outfile call commented out as not needed any more
+
+- initialize_atmos replaced with initialize_ldas_atmos
+
+- changes made to mass balance for state initialisation
+
+- call to dist_prec changed to dist_prec_ldas
+
+<b>write_data_ldas: ldas version of write_data.c</b>
+
+- outfiles_struct replaced with ldas_outfiles_struct
+
+<b>write_model_state_ldas.c: ldas specific changes</b>
+
+- write out state for wet and dry fractions to state file
+
+<b>new LDAS specific files</b>
+
+- vicNl_ldas.h: ldas specific definitions
+
+- put_data_ldas.c replaces put_data.c
+
+- dist_prec_ldas.c replaces dist_prec.c
+
+- initialize_ldas_atmos.c replaces initialize_atmos.c
+
+- write_data_ldas.c replaces write_data.c
+
+- make_fname.c: creates output file names, replaces make_in_and_outfiles.c
+
+- open_ldas_files.c: calls open_ldas_outfiles.c and open_ldas_metfiles.c
+
+- open_ldas_outfiles.c: open output files
+
+- open_ldas_metfiles.c: open met input files
+
+- process_masks.c: process the input masks [MASK and PROCESSOR_MASK]
+	
+- get_ldas_global_param.c: get the ldas specific global options from file
+
+- initialize_model_state_ldas.c: replaces initialize_model_state.c
+
+- make_dmy_ldas.c: replaces make_dmy.c
+
+- read_initial_model_state_ldas.c: replaces read_initial_model_state.c
+
+- write_model_state_ldas.c: replaces write_model_state.c
+
+<b>files not required</b>
+
+- check_state_file.c
+ 
+- mtclim42*: not required as all forcing inputs are provided
+
+- read_forcing_data.c: not required with new forcing input format
+
+
+Mon Nov 13 2000
+---------------
+
+<b>compute_dz.c: enhancement</b> 
+
+- comparison of thermal nodes depth and damping depth fails on restart from a state file because of floating point representation inaccuracies in the state file.
+	- therefore add flexibility (order of +/- 10-e3) to the comparison.
+
+
+
+
+

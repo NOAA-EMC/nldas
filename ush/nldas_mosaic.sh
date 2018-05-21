@@ -108,7 +108,7 @@ while [ $sdate -le $edate ]; do
     while [ $hh -le 12 ]; do
       cp -p $INDIR/$year2/$sdate1/${sdate1}${hh}.grb $COM_OUT/nldas.$sdate1/mosaic.t${cyc}z.grbf${hh}
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert ${alert_type} $job $COM_OUT/nldas.$sdate1/mosaic.t${cyc}z.grbf${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate1/mosaic.t${cyc}z.grbf${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi

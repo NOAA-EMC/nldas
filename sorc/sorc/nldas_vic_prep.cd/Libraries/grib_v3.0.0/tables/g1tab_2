@@ -1,0 +1,226 @@
+GRIB Table 2
+Code Figure    Field Parameter                                       Unit
+===========    ===============                                       ====
+000            Reserved                                              *
+001            Pressure                                              Pa
+002            Pressure reduced to MSL                               Pa
+003            Pressure tendency                                     Pa/s
+004            *                                                     *
+005            *                                                     *
+006            Geopotential                                          m*m/s/s
+007            Geopotential height                                   gpm
+008            Geometrical height                                    m
+009            Standard deviation of height                          m
+010            *                                                     *
+011            Temperature                                           K
+012            Virtual temperature                                   K
+013            Potential temperature                                 K
+014            Pseudo-adiabatic potential temperature                K
+015            Maximum temperature                                   K
+016            Minimum temperature                                   K
+017            Dew-point temperature                                 K
+018            Dew-point depression (or deficit)                     K
+019            Lapse rate                                            K/m
+020            Visibility                                            m
+021            Radar spectra (1)                                     -
+022            Radar spectra (2)                                     -
+023            Radar spectra (3)                                     -
+024            Parcel lifted index (to 500 hPa)                      K
+025            Temperature anomaly                                   K
+026            Pressure anomaly                                      Pa
+027            Geopotential height anomaly                           gpm
+028            Wave spectra (1)                                      -
+029            Wave spectra (2)                                      -
+030            Wave spectra (3)                                      -
+031            Wind direction                                        Degree true
+032            Wind speed                                            m/s
+033            u-component of wind                                   m/s
+034            v-component of wind                                   m/s
+035            Stream function                                       m*m/s
+036            Velocity potential                                    m*m/s
+037            Montgomery stream function                            m*m/s/s
+038            Sigma co-ordinate vertical velocity                   /s
+039            Vertical velocity                                     Pa/s
+040            Vertical velocity                                     m/s
+041            Absolute vorticity                                    /s
+042            Absolute divergence                                   /s
+043            Relative vorticity                                    /s
+044            Relative divergence                                   /s
+045            Vertical u-component shear                            /s
+046            Vertical v-component shear                            /s
+047            Direction of current                                  Degree true
+048            Speed of current                                      m/s
+049            u-component of current                                m/s
+050            v-component of current                                m/s
+051            Specific humitity                                     kg/kg
+052            Relative humidity                                     %
+053            Humidity mixing ratio                                 kg/kg
+054            Precipitable water                                    kg/m/m
+055            Vapour pressure                                       Pa
+056            Saturation deficit                                    Pa
+057            Evaporation                                           kg/m/m
+058            Cloud ice                                             kg/m/m
+059            Precipitaiton rate                                    kg/m/m/s
+060            Thunderstorm probability                              %
+061            Total precipitation                                   kg/m/m
+062            Large scale precipitation                             kg/m/m
+063            Convective precipitation                              kg/m/m
+064            Snowfall rate water equivalent                        kg/m/m/s
+065            Water equivalent of accumulated snow depth            kg/m/m
+066            Snow depth                                            m
+067            Mixed layer depth                                     m
+068            Transient thermocline depth                           m
+069            Main thermocline depth                                m
+070            Main thermocline anomaly                              m
+071            Total cloud cover                                     %
+072            Convective cloud cover                                %
+073            Low cloud cover                                       %
+074            Medium cloud cover                                    %
+075            High cloud cover                                      %
+076            Cloud water                                           kg/m/m
+077            Best lifted index (to 500 hPa)                        K
+078            Convective snow                                       kg/m/m
+079            Large scale snow                                      kg/m/m
+080            Water temperature                                     K
+081            Land cover (1 = land, 0 = sea)                        Proportion
+082            Deviation of sea-level from mean                      m
+083            Surface roughness                                     m
+084            Albedo                                                %
+085            Soil temperature                                      K
+086            Soil moisture content                                 kg/m/m
+087            Vegetation                                            %
+088            Salinity                                              kg/kg
+089            Density                                               kg/m/m/m
+090            Water run-off                                         kg/m/m
+091            Ice cover (1 = ice, 0 = no ice)                       Proportion
+092            Ice thickness                                         m
+093            Direction of ice drift                                Degree true
+094            Speed of ice drift                                    m/s
+095            u-component of ice drift                              m/s
+096            v-component of ice drift                              m/s
+097            Ice growth rate                                       m/s
+098            Ice divergence                                        /s
+099            Snow melt                                             kg/m/m
+100            Significant height of combined wind waves and swell   m
+101            Direction of wind waves                               Degree true
+102            Significant height of wind waves                      m
+103            Mean period of wind waves                             s
+104            Direction of swell waves                              Degree true
+105            Significant height of swell waves                     m
+106            Mean period of swell waves                            s
+107            Primary wave direction                                Degree true
+108            Primary wave mean period                              s
+109            Secondary wave direction                              Degree true
+110            Secondary wave mean period                            s
+111            Net short-wave radiation (surface)                    W/m/m
+112            Net long-wave radiation (surface)                     W/m/m
+113            Net short-wave radiation (top of atmosphere)          W/m/m
+114            Net long-wave radiation (top of atmosphere)           W/m/m
+115            Long-wave radiation                                   W/m/m
+116            Short-wave radiation                                  W/m/m
+117            Global radiation                                      W/m/m
+118            *                                                     *
+119            *                                                     *
+120            *                                                     *
+121            Latent heat flux                                      W/m/m
+122            Sensible heat flux                                    W/m/m
+123            Boundary layer dissipation                            W/m/m
+124            Momentum flux, u-component                            N/m/m
+125            Momentum flux, v-component                            N/m/m
+126            Wind mixing energy                                    J
+127            Image data                                            *
+255            Missing value                                         *
+######################################################################
+GRIB Table 2 - Sub A
+Code Figure    Field Parameter                                       Unit
+===========    ===============                                       ====
+######################################################################
+GRIB Table 2 - Sub B
+Code Figure    Field Parameter                                       Unit
+===========    ===============                                       ====
+######################################################################
+GRIB Table 2 - Sub C
+Code Figure    Field Parameter                                       Unit
+===========    ===============                                       ====
+######################################################################
+GRIB Table 2 - Sub D
+Code Figure    Field Parameter                                       Unit
+===========    ===============                                       ====
+######################################################################
+GRIB Table 2 - Sub E
+Code Figure    Field Parameter                                       Unit
+===========    ===============                                       ====
+######################################################################
+GRIB Table 3: Level Definitions
+Line 1: Level ID | Number of Octets | Meaning
+Line 2: Contents of octet 11 (optional)
+Line 3: Contents of octet 12 (optional)
+001  0  Ground or water surface
+002  0  Cloud base level
+003  0  Level of cloud tops
+004  0  Level of 0 degree C isotherm
+005  0  Level of adiabatic condensation lifted from the surface
+006  0  Maximum wind level
+007  0  Tropopause
+008  0  Nominal top of atmosphere
+009  0  Sea bottom
+100  2  Isobaric surface
+Pressure in hPa
+101  1  Layer between two isobaric surfaces
+Pressure of top in kPa
+Pressure of bottom in kPa
+102  0  Mean sea level
+103  2  Specified altitude above mean sea level
+Altitude in meters
+104  1  Layer between two specified altitudes above mean sea level
+Altitude of top in hm
+Altitude of bottom in hm
+105  2  Specified height level above ground
+Height in meters
+106  1  Layer between two specified height levels above ground
+Height of top in hm
+Height of bottom in hm
+107  2  Sigma level
+Sigma value in 1/10 000
+108  1  Layer between two sigma levels
+Sigma value of top in 1/100
+Sigma value of bottom in 1/100
+109  2  Hybrid level
+Level number
+110  1  Layer between two hybrid levels
+Level number of top
+Level number of bottom
+111  2  Depth below land surface
+Depth in centimeters
+112  1  Layer between two depths below land surface
+Depth of upper surface (cm)
+Depth of lower surface (cm)
+113  2  Isentropic (theta) level
+Potential temperature in K (2 octets)
+114  1  Layer between two isentropic levels
+475 K minus theta of top in K
+475 K minus theta of bottom in K
+121  1  Layer between two isobaric surfaces (high precision)
+1100 hPa minus pressure of top in hPa
+1100 hPa minus pressure of bottom in hPa
+125  2  Specified height level above ground (high precision)
+Height in centimeters
+128  1  Layer between two sigma levels (high precision)
+1.1 minus sigma of top, in 1/1000 of sigma
+1.1 minus sigma of bottom, in 1/1000 of sigma
+141  1  Layer between two isobaric surfaces (mixed precision)
+Pressure of top in kPa
+1100 hPa minus pressure of bottom in hPa
+160  2  Depth below sea level
+Depth in meters (2 octets)
+200  0  Entire atmosphere (considered as a single layer)
+201  0  Entire ocean (considered as a single layer)
+######################################################################
+GRIB Table - Generating Process Definitions (Octet 6 of PDS)
+Code Figure    Model Name
+===========    ==========
+######################################################################
+GRIB Table - Pre-defined geometries (Octet 7 of PDS)
+Code Figure    Geometry Name
+===========    =============
+255            Undefined grid, description in GDS

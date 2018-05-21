@@ -1,0 +1,32 @@
+<html><body><pre>
+
+Wed Oct  9 14:48:33 EDT 2002
+----------------------------
+
+<b>README for the VIC pre-processor</b>
+
+Wed Oct 9 2002
+--------------
+Changes:
+- the input solar radiation is an instantaneous value which is treated as
+ an average over the timestep. This is wrong. The value used should be 
+interpolated between the values at the beginning and end of the hour by
+linear interpolation or using zenith angle.
+	- added a new field in the variables table to indicate that the data should be
+	converted from instantaneous to average.
+- also need to use some of the grib pds values to differentiate between the same variable
+but from different sources
+	- use the grib proc id which is unique to between EDAS, GOES and Stage IV and so 
+	we use this to distinguish between the different precips and insolations
+
+
+Todo:
+- figure out how to convert goes from instantaneous to time averaged at the beginning of
+the day, i.e. when GOES is missing at the beginning of the hour and has to be replaced
+with EDAS data which is a time averaged value. Perhaps we can convert GOES to instantaneous
+and use that to calculate the time averaged GOES value.
+- remove variable table from code so that we can change the outputs without re-compiling
+	- not done yet
+- also edit the post-processor so that it lists the soil depths as variable
+- put in a flag in the variable table that switches qc checking on/off instead of trying
+to use the min/max values.
