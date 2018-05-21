@@ -13,7 +13,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_prep.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -21,8 +21,8 @@ edate=$2
 
 export cyc=${cyc:-12}
 
-export model_ver=${model_ver:-v1.0.0}
-export HOMEnldas=${HOMEnldas:-/nwprod/nldas.${model_ver}}
+export nldas_ver=${nldas_ver:-v1.0.0}
+export HOMEnldas=${HOMEnldas:-/nwprod/nldas.${nldas_ver}}
 export FIXnldas=${FIXnldas:-$HOMEnldas/fix}
 export EXECnldas=${EXECnldas:-$HOMEnldas/exec}
 export PARMnldas=${PARMnldas:-$HOMEnldas/parm}
@@ -35,7 +35,7 @@ while [ $sdate -le $edate ]; do
   day2=`/nwprod/util/ush/finddate.sh $sdate d+1`
 
   export pgm=nldas_prep
-  . $DATA/prep_step
+  . prep_step
   
   echo 'Here we start to run nldas forcing generation'
   # BUILD the ldas.crd file for a realtime update
@@ -84,7 +84,7 @@ while [ $sdate -le $edate ]; do
 
   # Run the code with the updated LIS nldas card (ldas.crd)
   $EXECnldas/nldas_prep
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
 
   sdate1=`/nwprod/util/ush/finddate.sh $sdate d+1`
 

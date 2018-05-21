@@ -18,7 +18,7 @@ export LASTNARRFILE=${LASTNARRFILE:-$LOGDIR/nldas_prep_lastprocessed.log}
 
 # GET LAST NARR DAY PROCESSED - END OF FORCING ARCHIVE
 export RUNSTARTDATE=`cat $LASTNARRFILE`
-export RUNENDDATE=`$utilscript/finddate.sh $RUNSTARTDATE d+1`
+export RUNENDDATE=`finddate.sh $RUNSTARTDATE d+1`
 
 echo $RUNSTARTDATE
 echo "USING: $RUNSTARTDATE to GET START DATA"
@@ -32,7 +32,7 @@ echo "RUNNING THROUGH: $RUNENDDATE"
 # day of the data and will ensure the internal consistency of the data 
 # stuctures for the furure processing periods. 
 
-export  RUNSTARTDATE_DATA=`$utilscript/finddate.sh $RUNSTARTDATE d-2`
+export  RUNSTARTDATE_DATA=`finddate.sh $RUNSTARTDATE d-2`
     
 if [ $RUNSTARTDATE_DATA -le $RUNENDDATE ]; then
   echo "CMD: nldas_get_data.sh $RUNSTARTDATE_DATA $RUNENDDATE"

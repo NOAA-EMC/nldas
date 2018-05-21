@@ -15,7 +15,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_noah.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -25,12 +25,13 @@ edate=$2
 export DCOM_IN=${DCOM_IN:-/dcom/us007003}
 
 # set hourly stage2 precip directory
-export COMIN_HRLY=${COMIN_HRLY:-/com/hourly/prod}
+export COMINpcpanl=${COMINpcpanl:-/com2/pcpanl/para}
 
 # set rcdas forcing directory
-export COMIN_RCDAS=${COMIN_RCDAS:-/com/rcdas/prod}
+export COMINrcdas=${COMINrcdas:-/com/rcdas/prod}
 
 # set wgrib command
+# NOTE: This should be loaded with the grib_util module
 export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
 
 while [ $sdate -le $edate ]; do
@@ -46,13 +47,13 @@ while [ $sdate -le $edate ]; do
    export val_globe_in=$DCOM_IN/$today/wgrbbul/cpc_rcdas/$cpc_globe_in
    
    export pgm=cpc_precip_convert
-   . $DATA/prep_step
+   . prep_step
 
    cp -p $val_conus_in $DATA/cpcops.bin
    cp -p $val_globe_in $DATA/cpc_global.bin
    echo 'converting cpc conus and global precip to nldas domain and format'
    $EXECnldas/cpc_precip_convert
-   export err=$?; $DATA/err_chk
+   export err=$?; err_chk
 
    #To setup directory for date stored 
    export pconus=$DATA/PRECIP.PRISM.NEW/$yearmon
@@ -84,12 +85,12 @@ while [ $sdate -le $edate ]; do
 
    for hh in 00 01 02 03 04 05 06 07 08 09 10 11 12
    do
-   gunzip -v -c $COMIN_HRLY/nam_pcpn_anal.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb
+   gunzip -v -c $COMINpcpanl/pcpanl.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb
    done
 
    for hh in 13 14 15 16 17 18 19 20 21 22 23
    do
-   gunzip -v -c $COMIN_HRLY/nam_pcpn_anal.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb  
+   gunzip -v -c $COMINpcpanl/pcpanl.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb  
    done
 
    #get CMORPH data
@@ -126,7 +127,7 @@ while [ $sdate -le $edate ]; do
 
    for hh in 00 03 06 09 12 15 18 21
    do
-   export val_rcdas=$COMIN_RCDAS/rcdas.${today}/rcdas.t${hh}z.awip32.merged
+   export val_rcdas=$COMINrcdas/rcdas.${today}/rcdas.t${hh}z.awip32.merged
    export newfile=$DATA/NARR/$year/$today/${today}${hh}.NARR.grb
    cp $val_rcdas $DATA/merged_AWIP32.${today}${hh}
    export bigfile=$DATA/merged_AWIP32.${today}${hh}

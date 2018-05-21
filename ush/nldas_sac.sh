@@ -14,7 +14,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_sac.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -33,7 +33,7 @@ while [ $sdate -le $edate ]; do
   echo $today >today 
 
   export pgm=nldas_sac
-  . $DATA/prep_step
+  . prep_step
 
   #Input files:
   echo 'linking Noah land surface characteristics'
@@ -163,7 +163,7 @@ EOF
   
   echo 'running SAC model'
   $EXECnldas/nldas_sac_ldas
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
   
   chmod 644 *grb
   if [ ${SENDCOM:-YES} = YES ]; then

@@ -20,11 +20,11 @@ export LASTNARRFILE=${LASTNARRFILE:-$LOGDIR/nldas_prep_lastprocessed.log}
 
 # GET LAST NARR DAY PROCESSED - END OF FORCING ARCHIVE
 export RUNENDDATE=`cat $LASTNARRFILE`
-export RUNENDDATE=`$utilscript/finddate.sh $RUNENDDATE d-1`
+export RUNENDDATE=`finddate.sh $RUNENDDATE d-1`
 
 # FIND ENDTIME OF LAST ${MODEL} RUN
 export RUNSTARTDATE=`cat $LOGDIR/nldas_${model}_lastprocessed.log`
-export RUNSTARTDATE=`$utilscript/finddate.sh $RUNSTARTDATE d+1`
+export RUNSTARTDATE=`finddate.sh $RUNSTARTDATE d+1`
 echo $RUNSTARTDATE $RUNENDDATE
 echo "USING $LASTRSTFILE to RESTART CURRENT ${MODEL} RUN"
 echo "RUNNING THROUGH: $RUNENDDATE"

@@ -14,7 +14,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_mosaic.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -92,10 +92,10 @@ while [ $sdate -le $edate ]; do
    
   # Run mosaic land model with the updated LIS nldas card (ldas.crd)
   export pgm=nldas_mosaic_ldas
-  . $DATA/prep_step
+  . prep_step
 
   $EXECnldas/nldas_mosaic_ldas
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
    
   # Archive model initials
   export COMREST=${COMREST:-$COM_OUT}

@@ -1,0 +1,35 @@
+extern /prod12/rcdas/jrcdas_post_12
+suite test
+  family nldas
+    edit ECF_FILES '/ecf/ecfnets/scripts/test/nldas'
+    edit PROJ 'NLDAS'
+    edit CYC '12'
+    edit COMPATH '/com2/pcpanl/para'
+    task jnldas_prep
+      trigger /prod12/rcdas/jrcdas_post_12 == complete
+    family mosaic
+      task jnldas_forecast
+        trigger ../jnldas_prep == complete
+      task jnldas_routing
+        trigger jnldas_forecast == complete
+    endfamily
+    family noah
+      task jnldas_forecast
+        trigger ../jnldas_prep == complete
+      task jnldas_routing
+        trigger jnldas_forecast == complete
+    endfamily
+    family sac
+      task jnldas_forecast
+        trigger ../noah/jnldas_forecast == complete
+      task jnldas_routing
+        trigger jnldas_forecast == complete
+    endfamily
+    family vic
+      task jnldas_forecast
+        trigger ../jnldas_prep == complete
+      task jnldas_routing
+        trigger jnldas_forecast == complete
+    endfamily
+  endfamily
+endsuite

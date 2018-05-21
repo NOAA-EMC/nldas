@@ -13,7 +13,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_noah.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -33,7 +33,7 @@ while [ $sdate -le $edate ]; do
   echo 
 
   export pgm=nldas_noah_ldas
-  . $DATA/prep_step
+  . prep_step
 
   #Input files:
   echo 'linking land surface characteristics'
@@ -120,7 +120,7 @@ EOF
   
   echo 'running NOAH model'
   $EXECnldas/nldas_noah_ldas
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
   
   chmod 644 *grb
   if [ ${SENDCOM:-YES} = YES ]; then

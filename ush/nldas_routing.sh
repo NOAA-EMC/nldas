@@ -13,7 +13,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_noah_routing.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -35,7 +35,7 @@ while [ $sdate -le $edate ]; do
 
   export pgm=nldas_rout
 
-  . $DATA/prep_step
+  . prep_step
 
   # Copy nldas land-sea mask
   echo "copy NLDAS mask to $data directory"
@@ -115,7 +115,7 @@ while [ $sdate -le $edate ]; do
   echo "running river routing model"
 
   $EXECnldas/nldas_rout
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
   
   chmod 644 *grb
   if [ ${SENDCOM:-YES} = YES ]; then

@@ -27,7 +27,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_vic.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -64,7 +64,7 @@ while [ $sdate -le $edate ]; do
   day2=`/nwprod/util/ush/finddate.sh $sdate d+1`
 
   export pgm=nldas_prep
-  . $DATA/prep_step
+  . prep_step
 
   # copy initial conditions for vic model
   export RESDIR=${RESDIR:-$COM_IN}
@@ -183,10 +183,10 @@ while [ $sdate -le $edate ]; do
   # run the VIC post-processor
   echo "Pre-processor is running..." 
   export pgm=nldas_vic_prep
-  . $DATA/prep_step
+  . prep_step
 
   $EXECnldas/nldas_vic_prep ${GLOBAL_FILE}   
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
 
   cp -p ${QC_LOG_FILE} ${viclog}/qc.log.${day1} >> ${LOG_FILE} 2>&1
 
@@ -197,10 +197,10 @@ while [ $sdate -le $edate ]; do
   echo "------------------" 
   echo "VIC model is running..." 
   export pgm=nldas_vic_nldas
-  . $DATA/prep_step
+  . prep_step
 
   $EXECnldas/nldas_vic_ldas  -g ${GLOBAL_FILE}
-  export err=$?; $DATA/err_chk
+  export err=$?; err_chk
 
   # make vic grib output directory
   export OUTPUT_GRIB_DIR=$DATA/VIC_OUT_grib_retro_v4.0.3
@@ -220,10 +220,10 @@ while [ $sdate -le $edate ]; do
    sed 's/     / /g' ${GLOBAL_FILE} > ${GLOBAL_FILE}.tmp
   
    export pgm=nldas_vic_post
-   . $DATA/prep_step
+   . prep_step
 
    $EXECnldas/nldas_vic_post ${GLOBAL_FILE}.tmp
-   export err=$?; $DATA/err_chk
+   export err=$?; err_chk
 
    # Archive model initials
    export COMREST=${COMREST:-$COM_OUT}

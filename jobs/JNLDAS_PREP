@@ -1,12 +1,15 @@
 #!/bin/ksh
-set -xa
-#
-# Specify whether the run is production or development
-#
-export RUN_ENVIR=${RUN_ENVIR:-prod}
+date
+export PS4='$SECONDS + '
+set -x
+
+#############################################################
+# NOTE: This job depends on the prod_util module being loaded
+#############################################################
 
 #####################################################################################
 # Run config file to get input parameters
+# NOTE: $nldas_ver must be exported by the submission script prior to running this job!
 # This config file should define the following variables
 # DATA_IN: Location of working directory, default to /tmpnwprd
 # DEV_ECF: If the job is to be running using SMS, default to YES
@@ -14,41 +17,30 @@ export RUN_ENVIR=${RUN_ENVIR:-prod}
 # COM_IN:  Directory for input files, default to /com/$NET/${envir}
 # COM_OUT: Directory for output file, default to /com/$NET/${envir}
 # gespath: Directory for the guess or restart files, default to /nwges/${envir}
+# SENDECF: Flag Events on ecFlow
+# SENDCOM: Copy Files From $TMPDIR to $COMOUT
+# SENDDBN: Issue DBNet Client Calls
 #####################################################################################
-if [ "$RUN_ENVIR" != prod ]      ### For Developers
+if [ "$RUN_ENVIR" != "nco" ]      ### For Developers
 then
-  model_ver=${model_ver:-v1.0.0}
-  PARA_CONFIG=${nldas_para_config:-/land/save/${LOGNAME}/nldas.${model_ver}/user/nldas_para_config}
+  userid=${LOGNAME:?}
+  export HOMEnldas=${HOMEnldas:-/land/save/$userid/nldas.${nldas_ver:?}}
+  PARA_CONFIG=${nldas_para_config:-$HOMEnldas/user/nldas_para_config}
   if [ -s $PARA_CONFIG ] ; then . $PARA_CONFIG ; fi
   export userid=$LOGNAME
   export DATA_IN=${DATA_IN:-/ptmpp1/$userid}
+  export SENDECF=${SENDECF:-NO}
+  export SENDDBN=${SENDDBN:-NO}
+  export SENDCOM=${SENDCOM:-YES}
+  export jobid="LL${job}_${envir}.o$$"
+  export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${jobid}}
 fi
-
-###############################################################
-# This block can be modified for different test environment
-###############################################################
-if [ $RUN_ENVIR = prod -a $envir != prod ]; then
-# export SENDDBN=${SENDDBN:-NO}
-  export SENDDBN=${SENDDBN:-YES}
-  export jlogfile=${jlogfile:-/com/logs/${envir}/jlogfile}
-  export DATA_IN=${DATA_IN:-/tmpnwprd2}
-# export DBNROOT=/nwprod/spa_util/fakedbn
-fi
-
-export PS4='$SECONDS + '
-date
-
-# #### 07/20/99 ###############################
-# SETUP CDAS PREP PROCESSING VARIABLES
-# #############################################
 
 ########################################################
 # obtain unique process id (pid) and make temp directory
 ########################################################
-export pid=${pid:-$$}
-export DATA_IN=${DATA_IN:-/tmpnwprd}
-
-export DATA=$DATA_IN/${job}.${pid}
+export DATA_IN=${DATA_IN:-${DATAROOT:?}}
+export DATA=$DATA_IN/${jobid:?}
 mkdir -p $DATA
 cd $DATA
 
@@ -69,88 +61,44 @@ fi
 
 export alert_type=${alert_type:-NLDAS_GB2}
 
-####################################
-# Determine Job Output Name on System
-####################################
-export outid="LL$job"
-[ $envir != prod ]  && export outid="LL${job}_${envir}"
-export jobid="${outid}.o${pid}"
 export pgmout="OUTPUT.${pid}"
-
-####################################
-# SENDECF  - Flag Events on SMS
-# SENDCOM  - Copy Files From TMPDIR to $COMOUT
-# SENDDBN  - Issue DBNet Client Calls
-# GET_IOPROFILE - Run I/O statistics
-####################################
-export SENDECF=${SENDECF:-YES}
-export SENDCOM=${SENDCOM:-YES}
-export SENDDBN=${SENDDBN:-YES}
-
-#################################
-# Define the Log File directory
-#################################
-export jlogfile=${jlogfile:-/com/logs/jlogfiles/jlogfile.${job}.${pid}}
 
 ####################################
 # Specify Execution Areas
 ####################################
-export HOMEGLOBAL=${HOMEGLOBAL:-/nwprod}
-export EXECGLOBAL=${EXECGLOBAL:-$HOMEGLOBAL/exec}
-export FIXGLOBAL=${FIXGLOBAL:-$HOMEGLOBAL/fix}
-export USHGLOBAL=${USHGLOBAL:-$HOMEGLOBAL/ush}
-export PARMGLOBAL=${PARMGLOBAL:-$HOMEGLOBAL/parm}
-
-export HOMEUTIL=/nwprod/util
-export EXECUTIL=${HOMEUTIL}/exec
-
-export HOMEnldas=${HOMEnldas:-/nw${envir}/${NET}.${model_ver}}
 export FIXnldas=${FIXnldas:-$HOMEnldas/fix}
 export PARMnldas=${PARMnldas:-$HOMEnldas/parm}
 export EXECnldas=${EXECnldas:-$HOMEnldas/exec}
 export USHnldas=${USHnldas:-$HOMEnldas/ush}
 
-#############################
-# Set up the UTILITIES
-##############################
-export ushscript=${ushscript:-/nwprod/ush}
-export utilscript=${utilscript:-/nwprod/util/ush}
-export utilities=${utilities:-/nwprod/util/ush}
-
-##############################
-# Run setup to initialize working directory and utility scripts
-##############################
-sh $utilscript/setup.sh
-
-## export PDY=${PDY:-20140325};
 ##############################
 # Run setpdy and initialize PDY variables
 ##############################
-sh $utilscript/setpdy.sh
+setpdy.sh
 . ./PDY
 
 ##############################################
 # Define COM directories
 ##############################################
-export COM_IN=${COM_IN:-/com/${NET}/${envir}}
-export COM_OUT=${COM_OUT:-/com/${NET}/${envir}}
+export COM_IN=${COM_IN:-${COMROOT:?}/${NET}/${envir}}
+export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 
 export COMIN=$COM_IN/nldas.${PDY}
 export COMOUT=$COM_OUT/nldas.${PDY}
 export COMOUTp1=$COM_OUT/nldas.${PDYp1}
 
-export LOGDIR=${LOGDIR:-/com/${NET}/${envir}/logdir}
+export LOGDIR=${LOGDIR:-${COMROOT}/${NET}/${envir}/logdir}
 
 mkdir -m 775 -p $COMOUT $COMOUTp1 $LOGDIR
 
 # set cpc gauge and cmorph precip directory
-export DCOM_IN=${DCOM_IN:-/dcom/us007003}
+export DCOM_IN=${DCOM_IN:-${DCOMROOT:?}}
 
 # set hourly stage2 precip directory
-export COMIN_HRLY=${COMIN_HRLY:-/com/hourly/prod}
+export COMINpcpanl=${COMINpcpanl:-$(compath.py pcpanl/prod)}
 
 # set rcdas forcing directory
-export COMIN_RCDAS=${COMIN_RCDAS:-/com/rcdas/prod}
+export COMINrcdas=${COMINrcdas:-$(compath.py rcdas/prod)}
 
 env
 
@@ -166,7 +114,6 @@ postmsg "$jlogfile" "$msg"
 ##############################
 # Remove the Temporary working directory
 ##############################
-cd $DATA_IN
-if [ ${RM_TMPDIR:-YES} = YES ] ; then rm -rf $DATA ; fi
+if [ "$KEEPDATA" != "YES" ]; then rm -rf $DATA; fi
 
 date
