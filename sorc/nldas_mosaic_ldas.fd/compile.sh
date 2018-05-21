@@ -1,5 +1,7 @@
 #!  /bin/csh -fx
 
-cd make
+cd make/MAKDEP
+gmake
+cd ..
 gmake clean
 gmake

@@ -31,8 +31,8 @@ UNAMES := $(shell uname -s)
 UMACHINE := $(shell uname -m)
 
 ifeq ($(UNAMES),Linux)
-INC_NETCDF := /usrx/local/NetCDF/4.2/serial/include
-LIB_NETCDF := /usrx/local/NetCDF/4.2/serial/lib
+INC_NETCDF :=$(NETCDF_FFLAGS)
+LIB_NETCDF :=$(LD_LIBRARY_PATH)
 # we cannot find MPI lib and include on Tide 
 # (Checking with Geroge V. on 8 March 2013)
 #LIB_MPI := /usr/lib
@@ -283,7 +283,8 @@ GFIOLIBDIR = $(LIB_DIR)
 CPPFLAGS    := -P
 PSASINC     := 
 
- FOPTS = -L /nwprod/lib -lg2_4 -lip_d -lw3nco_4 -lw3emc_4 -lbacio_4 -ljasper -lpng -lz
+ FOPTS = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4}  -openmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
+
 #FOPTS = $(LIB_DIR)libip_d.a $(LIB_DIR)libbacio_4.a $(LIB_DIR)libw3nco_4.a
 
 # WARNING: -mp and -g together cause wrong answers

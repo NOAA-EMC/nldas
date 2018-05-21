@@ -68,8 +68,8 @@ ifeq ($(UNAMES),Linux)
 ifeq ($(UMACHINE),x86_64)
 
 MPI_PREFIX :=
-INC_NETCDF := /usrx/local/netcdf-4.1.3/include
-LIB_NETCDF :=  /usrx/local/netcdf-4.1.3/lib
+INC_NETCDF :=$(NETCDF_FFLAGS)
+LIB_NETCDF :=$(LD_LIBRARY_PATH)
 LIB_MPI    := 
 INC_MPI    :=   
 ESMF_DIR   := /usrx/local/esmf-3.1.0rp5
@@ -134,7 +134,7 @@ CPPFLAGS     = -P
 #### for grib1  
 ##FOPTS        =  /nwprod/lib/libbacio_4.a /nwprod/lib/libw3nco_4.a /nwprod/lib/libip_4.a /nwprod/lib/libsp_4.a -openmp 
 
-FOPTS        =  -L /nwprod/lib -lg2_4 -lw3nco_4 -lw3emc_4 -lbacio_4 -lip_4 -lsp_4 -openmp -ljasper -lpng -lz
+FOPTS        = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4} -openmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
 CFLAGS       = $(cpp_path) -c -I $(INC_MPI) -DIFC
 LDFLAGS      = 
 CPP         := /lib/cpp

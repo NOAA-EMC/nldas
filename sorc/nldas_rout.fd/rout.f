@@ -57,8 +57,8 @@ C     LTR   -- length of transport unit-hydrograph in DT
       CHARACTER*8 DAYS, DAYS0
       CHARACTER*4 YEARS, YEARS0
       CHARACTER*11  CNTRFL
-      CHARACTER*100 initial_1, initial_2, order_file, uh_file_1, uh_file_2
-      CHARACTER*100 filename
+      CHARACTER*150 initial_1, initial_2, order_file, uh_file_1, uh_file_2
+      CHARACTER*150 filename
       CHARACTER*11 ENVVAR
       
       CHARACTER*100 FILEOUT, routing_out
@@ -93,10 +93,9 @@ C     DEFINE THE OUTPUT MASK FOR GRIB FILES.
       DO I = 1, NX*NY
          IF (ORDER(1,I) .EQ. 0) THEN
             ORDER_N = I - 1
-            GOTO 20
+            EXIT
          END IF
       END DO
- 20   CONTINUE
 
       CALL CALC_AREA(NX,NY,AREA,DT)
       OPEN(17, FILE = 'days0.txt')

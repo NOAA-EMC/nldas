@@ -2006,10 +2006,6 @@ IF (NEEDPRECIP.EQ.1) THEN
       
       IF(ldas%yr.ge.2010) THEN       
        CALL GRIDCPCNEW (HNAMEmex,CPC,NLDAS,CPCFLAG)
-!       Open(60,file='cpc.bin',form='unformatted')
-!       write(60) cpc
-!       close(60)
-!       stop
       ELSE
        CALL GRIDCPCMEX (HNAMEmex,CPC,NLDAS,CPCFLAG)
        ENDIF 
@@ -2020,7 +2016,7 @@ IF (NEEDPRECIP.EQ.1) THEN
 !	print *,'mex gage is',cpc(89753)
 !       print *,'cpcflag=',cpcflag
    ENDIF
-  
+      print *,'cpcflag=',cpcflag 
    !  Transfer CPC to X,Y grid from 1D grid
 
    COUNT = 0
@@ -2041,6 +2037,8 @@ IF (NEEDPRECIP.EQ.1) THEN
 
    IF((LDAS%UNIFIED.EQ.1).AND.(UNIFIEDFLAG.NE.0)) GAGEFLAG=1
    IF((LDAS%CPC.EQ.1).AND.(CPCFLAG.NE.0)) GAGEFLAG=2
+
+   IF(CPCFLAG.EQ.0) GAGEFLAG=0
 
    !  Initialize Gage array to Undefined
    DO Y = 1, NY
@@ -2088,17 +2086,20 @@ IF (NEEDPRECIP.EQ.1) THEN
 !	print *,'prismunified=',prismunified(201,194)
 !	print *,'before, gage=',gage(201,194)
    IF (PRISMFLAG.EQ.1) THEN
+      count=0
       DO Y = 1, NY
          DO X = 1, NX
             IF (PRISMUNIFIED(x,y).GE.0) THEN
+               count=count+1
                GAGE(x,y)=PRISMUNIFIED(x,y)
             ELSE
                !  DO NOTHING, don't replace gage precip with prism precip
             ENDIF
          ENDDO
       ENDDO
-
+      if(count.eq.0) GAGEFLAG=0        ! no cpc conus precipitation
    ENDIF
+
 !	print *,'after gage=',gage(201,194)
 
    !  print *,'opening',NAMES(1)(1:50)//'GAGE.OUT'

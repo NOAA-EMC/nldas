@@ -42,7 +42,6 @@ C***********************************************************************
 
 
 C     read past header info in KPDS.tbl
-      OPEN (UNIT = 30, FILE = 'KPDS.tbl') 
       DO K = 1, 42
          READ(30,*)
       END DO

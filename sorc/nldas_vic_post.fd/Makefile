@@ -5,8 +5,7 @@ FC = ifort -132
 FFLAGS_BASE		= -I. 
 ## for linux x86_64 machine
 FFLAGS_linux_ia64 	= $(FFLAGS_BASE) -O3
-#LIBRARY = /nwprod/lib/libbacio_4.a /nwprod/lib/libip_d.a /nwprod/lib/libw3nco_4.a
-LIBRARY =  -L /nwprod/lib -lg2_4 -lw3nco_4 -lw3emc_4 -lbacio_4 -ljasper -lpng -lz
+LIBRARY = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
 
 HDRS = 	postproc.h           
 

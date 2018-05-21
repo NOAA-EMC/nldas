@@ -15,24 +15,14 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_noah.sh start-date end-date"
-  err_exit 99
+  $DATA/err_exit 99
 fi
 
 sdate=$1
 edate=$2
 
-# set cpc gauge and cmorph precip directory
-export DCOM_IN=${DCOM_IN:-/dcom/us007003}
-
-# set hourly stage2 precip directory
-export COMINpcpanl=${COMINpcpanl:-/com2/pcpanl/para}
-
-# set rcdas forcing directory
-export COMINrcdas=${COMINrcdas:-/com/rcdas/prod}
-
 # set wgrib command
-# NOTE: This should be loaded with the grib_util module
-export WGRIB=${WGRIB:-/nwprod/util/exec/wgrib}
+# NOTE: WGRIB was loaded with the grib_util module
 
 while [ $sdate -le $edate ]; do
    year=`echo $sdate |cut -c1-4`
@@ -51,9 +41,11 @@ while [ $sdate -le $edate ]; do
 
    cp -p $val_conus_in $DATA/cpcops.bin
    cp -p $val_globe_in $DATA/cpc_global.bin
+   
    echo 'converting cpc conus and global precip to nldas domain and format'
-   $EXECnldas/cpc_precip_convert
-   export err=$?; err_chk
+   startmsg
+   $EXECnldas/cpc_precip_convert >> $pgmout 2>errfile
+   export err=$?; $DATA/err_chk
 
    #To setup directory for date stored 
    export pconus=$DATA/PRECIP.PRISM.NEW/$yearmon
@@ -127,7 +119,7 @@ while [ $sdate -le $edate ]; do
 
    for hh in 00 03 06 09 12 15 18 21
    do
-   export val_rcdas=$COMINrcdas/rcdas.${today}/rcdas.t${hh}z.awip32.merged
+   export val_rcdas=$COMIN_RCDAS/rcdas.${today}/rcdas.t${hh}z.awip32.merged
    export newfile=$DATA/NARR/$year/$today/${today}${hh}.NARR.grb
    cp $val_rcdas $DATA/merged_AWIP32.${today}${hh}
    export bigfile=$DATA/merged_AWIP32.${today}${hh}
@@ -168,6 +160,5 @@ while [ $sdate -le $edate ]; do
    mkdir -p $hpd
    fi
 
-   sdate=`/nwprod/util/ush/finddate.sh $sdate d+1`
+   sdate=`finddate.sh $sdate d+1`
    done
-

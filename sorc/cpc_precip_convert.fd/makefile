@@ -1,10 +1,10 @@
 sorc=convert_cpcops_cpcus_cpcglobe.f
 pgrm=cpc_precip_convert
 
-lib=/nwprod/lib/libip_4.a /nwprod/lib/libsp_4.a /nwprod/lib/libbacio_4.a /nwprod/lib/libw3nco_4.a -openmp 
+lib=${IP_LIB4} ${SP_LIB4} ${BACIO_LIB4} ${W3NCO_LIB4} 
  
 FC=ifort
-FFLAGS=-extend_source -convert big_endian
+FFLAGS=-openmp -extend_source -convert big_endian
 
 ${pgrm}:	${sorc}
 	${FC} ${FFLAGS} -o ${pgrm} ${sorc} ${lib}

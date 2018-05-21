@@ -20,7 +20,7 @@ C  modified by Y. Xia for new NARR NLDAS forcing dataset
         real f(nldas), tair(nldas), spfh(nldas), psfc(nldas), 
      +       uwind(nldas), vwind(nldas),lwrd(nldas),pevap(nldas),
      +       cape(nldas),prec(nldas),swrd(nldas),edasprec(nldas)
-        character filnam*100
+        character filnam*150
         character clugb*2
 
         logical*1 lb(nldas)
@@ -51,7 +51,7 @@ C          WRITE(*,*) ' kpds = ', kpds, ' jpds = ', jpds
           IF (iret .NE. 0) THEN
              OPEN(80, file='stop.file')
              WRITE(80,*) 'noah model stopped'
-             WRITE(*,*) 'STOP NAOH MODEL'
+             WRITE(*,*) 'STOP NAOH MODEL, IRET=', iret
 CJZ     Added error checking
              CALL ERREXIT(iret)
              STOP

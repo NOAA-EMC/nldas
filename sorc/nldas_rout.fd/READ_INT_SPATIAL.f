@@ -4,7 +4,7 @@
 
       INTEGER nx, ny, nz, i, j, k
       INTEGER temp(nx,ny,nz)
-      CHARACTER*100 fn
+      CHARACTER*150 fn
       INTEGER ios
       
       OPEN(80,FILE = TRIM(fn),IOSTAT=ios,

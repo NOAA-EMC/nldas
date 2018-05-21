@@ -215,14 +215,10 @@ C-----------------------------------------------------------------------
       integer       strlen
 
       strlen = 1
- 100  continue
-      if (str(strlen:strlen) .ne. ' ') then
-         strlen = strlen + 1
-      else
-         goto 200
-      end if
-      goto 100
- 200  continue
+
+      do while (str(strlen:strlen) .ne. ' ')
+      strlen = strlen + 1
+      enddo 
 
       strlen = strlen - 1
 

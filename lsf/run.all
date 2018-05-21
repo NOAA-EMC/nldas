@@ -8,25 +8,26 @@ pcyc=`date +%H`
 
 pdate=$pday$pcyc
 
-export PDY=`/nwprod/util/exec/ndate -3 $pdate|cut -c1-8`
+export PDY=`ndate -3 $pdate|cut -c1-8`
 export cyc=12
 
-cd /meso/save/Yuqiu.Zhu/nldas/lsf
+cd /land/save/Youlong.Xia/nldas.v2.5.2/lsf
 
 export PATH="$PATH:./"
-. /usrx/local/Modules/3.2.9/init/ksh
+. /usrx/local/Modules/default/init/ksh
 module load ibmpe
 module load lsf
 module load ics
 
-bsub <jnldas_prep_12.ecf
+bsub <jnldas_prep1_12.ecf
+bsub <jnldas_prep2_12.ecf
 bsub <jnldas_noah_12.ecf
-bsub <jnldas_mosaic_12.ecf
-bsub <jnldas_vic_12.ecf
-bsub <jnldas_sac_12.ecf
 bsub <jnldas_rout_noah_12.ecf
+bsub <jnldas_mosaic_12.ecf
 bsub <jnldas_rout_mosaic_12.ecf
-bsub <jnldas_rout_vic_12.ecf
+bsub <jnldas_sac_12.ecf
 bsub <jnldas_rout_sac_12.ecf
+bsub <jnldas_vic_12.ecf
+bsub <jnldas_rout_vic_12.ecf
 
 exit

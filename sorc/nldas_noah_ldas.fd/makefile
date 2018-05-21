@@ -19,19 +19,16 @@ OBJS =	OBJ/MAIN.o		\
 	OBJ/ZTERP.o          \
 	OBJ/FINTERP.o       
 
-FC = ifort -convert big_endian
-#LIBS= /nwprod/lib/libip_d.a \
-#      /nwprod/lib/libbacio_4.a \
-#      /nwprod/lib/libw3nco_4.a
+FC = ifort
 
-LIBS =  -L /nwprod/lib -lg2_4 -lw3nco_4 -lw3emc_4 -lbacio_4 -ljasper -lpng -lz                            
+#LIBS =  -L /nwprod/lib-lg2_4 -lw3nco_4 -lw3emc_4 -lbacio_4 -ljasper -lpng -lz  
+LIBS=${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}                           
 PROGRAM = nldas_noah_ldas
-FFLAGS= -extend-source -c  
+FFLAGS= -extend-source -convert big_endian -c  
 LFLAGS= -O3
 
 $(PROGRAM): $(OBJS)
 	    $(FC) $(LFLAGS) $(OBJS) $(LIBS) -o $(PROGRAM)
-
 clean:
 	/bin/rm -f OBJ/*.o $(PROGRAM)
 

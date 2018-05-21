@@ -1,14 +1,16 @@
 #!/bin/ksh
 #BSUB -J jnldas_vic_12
-#BSUB -w "ended(jnldas_prep_12)"
-#BSUB -oo /ptmp/Yuqiu.Zhu/com/output/prod/nldas/nldas_vic_12.o%J
-#BSUB -eo /ptmp/Yuqiu.Zhu/com/output/prod/nldas/nldas_vic_12.o%J
-#BSUB -cwd /ptmp/Yuqiu.Zhu/tmpnwprd
+#BSUB -w "ended(jnldas_prep1_12) && ended(jnldas_prep2_12)"
+#BSUB -o /ptmpp2/Youlong.Xia/com/output/prod/nldas/nldas_vic_12.o%J
+#BSUB -e /ptmpp2/Youlong.Xia/com/output/prod/nldas/nldas_vic_12.o%J
+#BSUB -cwd /ptmpp2/Youlong.Xia/tmpnwprd
+#BSUB -q dev2
 #BSUB -n 1
-#BSUB -R span[ptile=1]
-#BSUB -q "dev_shared"
-#BSUB -W 00:45
-#BSUB -R "rusage[mem=2000]" -R "affinity[core]"
+#BSUB -P NLDAS-T2O
+#BSUB -W 02:30
+#BSUB -R rusage[mem=1000]
+#BSUB -R affinity[core]
+
 
 export envir=dev
 export RUN_ENVIR=dev
@@ -16,7 +18,7 @@ export cyc=12
 export model=vic
 export job=jnldas_vic_12
 
-#export PDY=20131122
+export model_ver=v2.5.2
+export nldas_para_config=/land/save/Youlong.Xia/nldas.${model_ver}/user/nldas_para_config
+/land/save/Youlong.Xia/nldas.${model_ver}/jobs/JNLDAS_FCST
 
-export nldas_para_config=/meso/save/Yuqiu.Zhu/nldas/user/nldas_para_config
-/meso/save/Yuqiu.Zhu/nldas/jobs/JNLDAS_FCST

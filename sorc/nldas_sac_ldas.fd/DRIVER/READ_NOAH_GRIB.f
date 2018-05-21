@@ -15,7 +15,7 @@
       type(gribfield) :: gfld
       logical :: unpack=.true.
       real  potevap(nldas)
-      character filnam*100
+      character filnam*150
 
 !     open grib2 file
       call baopen (lugb, trim(filnam), jret)

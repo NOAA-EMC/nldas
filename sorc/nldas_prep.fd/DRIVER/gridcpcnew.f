@@ -28,7 +28,7 @@ C
 C
 	INTEGER I, NCPC, NLDAS, LDASGRD, LDASGDS(22), MISG, 
      +          GDS(22), LENGDS, IRET, CPCGRD, CPCGDS(22), IP,
-     +          IPOPT(20), KM, IBI, NO, IBO,  LUGB
+     +          IPOPT(20), KM, IBI, NO, IBO,  LUGB, NN
 C
 	INTEGER FLAG           !0=Failed to get CPC Precip
 			       !1=Successful opening of file
@@ -97,12 +97,11 @@ C	write(*,*) LDASGDS
          CPCGDS(20)=255
          CPCGDS(21)=0
          CPCGDS(22)=0
-	
-C	CALL MAKGDS (CPCGRD, CPCGDS, GDS, LENGDS, IRET)
-C	IF (IRET .NE. 0) THEN
-C	  PRINT*, 'MAKCPCGDS FAILED, IRET= ',IRET
-C	  STOP
-C	END IF
+
+C initialize CPC data
+        DO I=1,NLDAS
+        CPC(I)=-999.0
+        ENDDO
 C
 C  READ IN THE ORIGINAL GRID AND SETUP A BITMAP FOR IPOLATES.  IF VALUE
 C  LESS THAN 0.254 mm, THEN RESET TO ZERO.  
@@ -114,17 +113,25 @@ C     &  STATUS='OLD',access='direct',recl=321*201*4,err=77)
 C        read (59,rec=1) rawprec
 C        CLOSE(59) 
 C sequential read
-        open (unit=59,file=HIGGINSNAME,FORM='UNFORMATTED',err=77)
+        open (unit=59,file=HIGGINSNAME,FORM='UNFORMATTED',err=77) 
         read (59) rawprec
         CLOSE(59)
-C --- convert CPC operation precipitation from 0.1mm unit into 1.0 mm --
-C ------ set the P<0.1mm to zero --------- Youlong Xia -----------------
+C ---------- see if all data are undefined ------------------------
+        NN=0
+        DO I = 1, NCPC
+        IF(rawprec(I).GT.0.0) NN=NN+1
+        ENDDO
+
+        IF(NN.NE.0) THEN
+C --- convert the data into mm -------------------------------------
  	DO I = 1, NCPC
        	  RAWBIT(I) = .TRUE.
-          RAWPREC(I) = RAWPREC(I)/10.0   
+          RAWPREC(I) = RAWPREC(I)/10.0
+
           IF (RAWPREC(I) .LT. 0.1) THEN
             RAWPREC(I) = 0
           END IF
+   
 	END DO
 C
 C  REGRID THE DATA WITH IPOLATES   
@@ -132,13 +139,11 @@ C
 	CALL IPOLATES (IP,IPOPT,CPCGDS,LDASGDS,NCPC,NLDAS,
      +                 KM,IBI,RAWBIT,RAWPREC,NO,RLAT,RLON,
      +                 IBO,LO,CPC,IRET)
-	IF (IRET .NE. 0) THEN
-	  PRINT*, 'IPOLATES CPC FAILED, IRET= ',IRET
-	  STOP
-	END IF
-	FLAG=1
+        
+        IF (IRET .EQ. 0) FLAG=1
+        ENDIF       ! not all CPC P values are undefined
  77     continue
-!	PRINT *,'flag=',flag
+C	PRINT *,'flag=',flag
 	RETURN
 	END
 

@@ -1,0 +1,243 @@
+#-----------------------------------------------------------------------
+# This Makefile is for building the CLM2 on various platforms
+#
+# Env variables that are referenced in this Makefile:
+#
+#	LIB_NETCDF	 Directory location of the NetCDF library.
+#	INC_NETCDF	 Directory location of the NetCDF include files.
+#	LIB_MPI	         Directory location of the MPI library.
+#	INC_MPI	         Directory location of the MPI include files.
+#       ESMF_DIR         Directory location of ESMF source tree.
+#       ESMF_ARCH        Desired ESMF architecture (Determined if not set).
+#	MODEL_EXEDIR	 Directory to build the executable in.
+#	MODEL_SRCDIR	 Directory where the source code resides.
+#	EXENAME	         Name to  call the executable.
+#	SPMD		 Whether to build in SPMD mode or not. 	[values TRUE FALSE]
+#			 (If this variable not set, the ./misc.h file is checked)
+#	DEPGEN		 Name and/or path of the dependency generator to use.
+#	USER_FFLAGS	 Additional compiler flags that the user wishes to set.
+#	USER_FC	         Compiler that the user wishes to use instead of
+#			 compiler given in the Makefile.
+#	NO_SWITCH	 On Compaq if the hardward switch is not available
+#			 set this env variable to "TRUE".
+#
+# Defaults for all of the above are selected here in the Makefile itself.
+#	
+# Note: If the NetCDF libraries and include files are not in 
+#       /usr/local/lib and /usr/local/include, respectively, 
+#       then define the environment variables 
+#       LIB_NETCDF and INC_NETCDF to point to the proper locations.
+#
+# Note: VPATH only looks in the current directory !!!!
+#       Create file named Filepath for multiple search paths
+#
+# Note: The ESMF library is included in the CLM2 distribution in 
+#       $MODEL_SRCDIR/utils/esmf and is built using this makefile.  
+#------------------------------------------------------------------------
+
+# Set up special characters
+null  :=
+space := $(null) $(null)
+
+# Check for directory in which to put executable
+ifeq ($(MODEL_EXEDIR),$(null))
+MODEL_EXEDIR := .
+endif
+
+# Check for name of executable
+ifeq ($(EXENAME),$(null))
+EXENAME := namforecast
+endif
+
+# Check if SPMD is defined in "misc.h"
+# Ensure that it is defined and not just "undef SPMD" set in file
+ifeq ($(SPMD),$(null))
+  SPMDSET := $(shell /bin/grep SPMD misc.h)
+  ifneq (,$(findstring define,$(SPMDSET)))
+    SPMD := TRUE
+  else
+    SPMD := FALSE
+  endif
+endif
+
+# Determine platform 
+UNAMES := $(shell uname -s)
+UMACHINE  := $(shell uname -m)
+
+ifeq ($(UNAMES),Linux)
+ifeq ($(UMACHINE),x86_64)
+
+MPI_PREFIX :=
+INC_NETCDF :=$(NETCDF_FFLAGS)
+LIB_NETCDF :=$(LD_LIBRARY_PATH)
+LIB_MPI    := 
+INC_MPI    := $(G2_INC4)  
+ESMF_DIR   := /usrx/local/esmf-3.1.0rp5
+LIB_ESMF   := $(ESMF_DIR)/lib/libO
+MOD_ESMF   := $(ESMF_DIR)/mod/modO
+
+endif
+endif
+# Load dependency search path.
+dirs := . $(shell cat Filepath)
+
+# Set cpp search path, include netcdf
+cpp_dirs := $(dirs) $(INC_NETCDF) $(INC_MPI)
+cpp_path := $(foreach dir,$(cpp_dirs),-I$(dir)) # format for command line
+
+# Expand any tildes in directory names. Change spaces to colons.
+VPATH    := $(foreach dir,$(cpp_dirs),$(wildcard $(dir))) 
+VPATH    := $(subst $(space),:,$(VPATH))               
+
+#------------------------------------------------------------------------
+# Primary target: build the model
+#------------------------------------------------------------------------
+all: $(MODEL_EXEDIR)/$(EXENAME)
+
+
+# Get list of files and determine objects and dependency files
+FIND_FILES = $(wildcard $(dir)/*.F90 $(dir)/*.f $(dir)/*.c)
+FILES      = $(foreach dir, $(dirs),$(FIND_FILES))
+SOURCES   := $(sort $(notdir $(FILES)))
+DEPS      := $(addsuffix .d, $(basename $(SOURCES)))
+OBJS      := $(addsuffix .o, $(basename $(SOURCES)))
+
+$(MODEL_EXEDIR)/$(EXENAME): $(OBJS)
+	$(FC) -o $@ $(OBJS) $(FOPTS) $(LDFLAGS)
+
+
+debug: $(OBJS)
+	echo "FFLAGS: $(FFLAGS)"
+	echo "LDFLAGS: $(LDFLAGS)"
+	echo "OBJS: $(OBJS)"
+
+#***********************************************************************
+#********** Architecture-specific flags and rules***********************
+#***********************************************************************
+
+#----------------------------------------------------------------
+# Linux X86_64
+#----------------------------------------------------------------
+#
+
+ifeq ($(UNAMES),Linux)
+
+ESMF_ARCH    = ia_64
+
+FC           = ifort
+CC           = gcc
+# Library directories
+FFLAGS      := $(cpp_path) -132 -c -g -O0 -convert big_endian -assume byterecl
+#FFLAGS      := $(cpp_path) -132 -c -g -convert big_endian -assume byterecl
+
+CPPFLAGS     = -P
+#### for grib1  
+##FOPTS        =  /nwprod/lib/libbacio_4.a /nwprod/lib/libw3nco_4.a /nwprod/lib/libip_4.a /nwprod/lib/libsp_4.a -openmp 
+
+FOPTS        =${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4} -openmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
+CFLAGS       = $(cpp_path) -c -I $(INC_MPI) -DIFC
+LDFLAGS      = 
+CPP         := /lib/cpp
+
+# Flags common to both compilers
+#
+ifeq ($(SPMD),TRUE)
+ FFLAGS  += -I$(INC_MPI)
+ LDFLAGS += -L$(LIB_MPI) -lmpich
+else
+  FFLAGS  += -DHIDE_MPI
+endif
+
+.SUFFIXES:
+
+.SUFFIXES: .f .f90 .F90 .c .o
+
+.F90.o:
+	$(FC) -c $(FFLAGS) $<
+.f.o:
+	$(FC) -c $(FFLAGS) $<
+.c.o:
+	$(CC) $(cpp_path) $(CFLAGS) $<
+
+endif
+
+#------------------------------------------------------------------------
+# Targets/rules that depend on architecture specific variables.
+#------------------------------------------------------------------------
+
+# The library is not made to be built in parallel, so we must null passed options and
+# specify only one job is to run.
+$(LIB_ESMF)/$(ESMF_ARCH)/libesmf.a:
+	cd $(ESMF_SRCDIR); \
+           $(MAKE) -j 1 BOPT=$(BOPT_ESMF) MF_BUILD=$(ESMF_LIBDIR) MF_DIR=$(ESMF_SRCDIR) MF_ARCH=$(ESMF_ARCH);
+
+time_manager.o : $(LIB_ESMF)/$(ESMF_ARCH)/libesmf.a
+
+RM := rm
+# Add user defined compiler flags if set, and replace FC if USER option set.
+FFLAGS  += $(USER_FFLAGS)
+ifneq ($(USER_FC),$(null))
+FC := $(USER_FC)
+endif
+
+clean:
+	$(RM) -f *.o *.mod *.stb *.f90 *.d $(MODEL_EXEDIR)/$(EXENAME)
+
+realclean:
+	$(RM) -f *.o *.d *.mod *.stb *.f90 $(MODEL_EXEDIR)/$(EXENAME)
+
+
+#------------------------------------------------------------------------
+#!!!!!!!!!!!!!!!!DO NOT EDIT BELOW THIS LINE.!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#------------------------------------------------------------------------
+# These rules cause a dependency file to be generated for each source
+# file.  It is assumed that the tool "makdep" (provided with this
+# distribution in clm2/tools/makdep) has been built and is available in
+# the user's $PATH.  Files contained in the clm2 distribution are the
+# only files which are considered in generating each dependency.  The
+# following filters are applied to exclude any files which are not in
+# the distribution (e.g. system header files like stdio.h).
+#
+#  1) Remove full paths from dependencies. This means gnumake will not break
+#     if new versions of files are created in the directory hierarchy
+#     specified by VPATH.
+#
+#  2) Because of 1) above, remove any file dependencies for files not in the 
+#     clm2 source distribution.
+#
+# Finally, add the dependency file as a target of the dependency rules.  This
+# is done so that the dependency file will automatically be regenerated 
+# when necessary.
+#
+#     i.e. change rule 
+#       make.o : make.c make.h       
+#       to:
+#       make.o make.d : make.c make.h
+#------------------------------------------------------------------------
+DEPGEN := ./makdep
+%.d : %.c
+	@echo "Building dependency file $@"
+	@$(DEPGEN) -f $(cpp_path) $< > $@
+%.d : %.f
+	@echo "Building dependency file $@"
+	@$(DEPGEN) -f $(cpp_path) $< > $@
+%.d : %.F90
+	@echo "Building dependency file $@"
+	@$(DEPGEN) -f $(cpp_path) $<  > $@
+#
+# if goal is clean or realclean then don't include .d files
+# without this is a hack, missing dependency files will be created
+# and then deleted as part of the cleaning process
+#
+INCLUDE_DEPS=TRUE
+ifeq ($(MAKECMDGOALS), realclean)
+ INCLUDE_DEPS=FALSE
+endif
+ifeq ($(MAKECMDGOALS), clean)
+ INCLUDE_DEPS=FALSE
+endif
+
+ifeq ($(INCLUDE_DEPS), TRUE)
+-include $(DEPS)
+endif
+

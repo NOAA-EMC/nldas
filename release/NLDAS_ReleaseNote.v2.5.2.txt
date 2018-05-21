@@ -1,0 +1,81 @@
+Release Note:  nldas.v2.0.2
+V1.0.0 – release March, 2011
+EMC quasi-operation version
+V2.0.0 – release March 18, 2014
+New Implementation on WCOSS
+First implementation of the North American Land Data Assimilation System
+(NLDAS) is to enhance US operational drought monitoring and prediction
+capabilities and to support the National Integrated Drought Information System
+(NIDIS) over the Continental United States (CONUS) domain.
+Use NARR/RCDAS model data (radiation, 2 m air temperature and specific
+humidity, 10-m wind speed, surface pressure) for atmospheric forcing.
+Use observed precipitation forcing (gauge based, radar temporally
+disaggregated)
+Use bias-corrected downward shortwave radiation via satellite retrieved solar
+radiation (GOES)
+Four individual land surface models (NOAH, MOSAIC, VIC and SAC) are run in an
+uncoupled mode.  The spatial resolution is 0.125 degree and the temporal
+resolution is an hour.
+River-Routing model uses the surface runoff and baseflow output from the above
+four models and generates the hourly streamflow .
+Jobs/components that will be implemented:
+jnldas_prep
+jnldas_noah, jnldas_mosaic, jnldas_vic, jnldas_sac
+jnldas_rout_noah, jnldas_rout_mosaic, jnldas_rout_vic, jnldas_rout_sac
+Output from the models
+Forcing data in both grib1 and grib2 format
+Model output data in grib2 format
+Model restart files
+River streamflow data in grib2 format
+Computing resource information:
+This NLDAS system runs only once per day (12Z).
+Total runtime is about 50-60 minutes.
+All the jobs will be running in serial mode, and the whole system will use at
+most 3 processors during the runtime period.
+Total disk usage is about 700 Mb per day.
+Dissemination info:
+The forcing (only the grib2 format), model output data and the river
+streamflow data (all in grib2 format) will need to be sent out to the public.
+Primary Users:
+NIDIS
+US Drought Monitor
+NCEP Climate Prediction Center
+Other external users such as Princeton University, University of Washington,
+NWS/OHD, NASA/GSFC. COLA, Climate Cooperations.
+Archive to HPSS:
+All of the output data (including the restart files) will need to be archived
+to HPSS.
+
+V2.0.1 – release April 22, 2014
+Description of changes
+Updated parameters used in the grib2 table in the fix files.
+Updated the source code that output the grib2 files to use appropriate
+parameters in reference to the grib2 table.
+Removed the comment-out lines for DBN_ALERT as we changed to use the "MODEL"
+variable instead of the explicit one.
+Commented out the alert for the "force-a" grib1 file, which is no longer
+necessary.
+V2.0.2 – release May 05, 2014
+Description of changes
+Additional updates of some parameters in the grib2 tables in the fix files, as
+suggested by CPC.
+Additional updates of the source codes that read/write the grib2 files to use
+appropriate parameters in reference to the grib2 table.
+Updated the Job scripts to use unified DBN alerts types for the NLDAS models.
+Updated the ex-scripts to add error-check such that the model run (NOAH,
+MOSAIC, SAC and VIC) will fail properly if they ever start ahead of the
+Forcing job.
+V2.0.3 ~@~S release June 09, 2014
+Description of changes
+Change NLDAS grib2 parameter tables in fix file to use simple packing
+method, which include some parameters to control grib2 output such as
+parameter ID, category, average/accumulate/simultaneous, decimal scale factor
+etc. This fix focuses on reducing decimal number for some variables such as
+soil moisture, surface pressure, snow water equivalent etc.
+V2.0.4 ~@~S release November 24, 2015
+Change due to CPC CMORPH data directory change in dcom (/dcom/us007003/20151122/wgrbbul/cpc_rcdas) and changed name from advt-8km-interp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-2015112221 into CMORPH_8KM-30MIN_2015112221 as well as RCDAS file name change in dcom (RFC 1458)
+V2.0.5 ~@~S release May 07, 2017
+Change due to Stage II radar data from com into com2 and directory is also chnaged so that our ushell need to be chnaged to fit this change.
+V2.5.2 ~@~S release May 07, 2018
+Released actual realtime NLDAS system by adding the forcing generation process to fill four-day gap. Use CPC global daily gauge-based precipitation (0.125 degree), stage IV precipitation, and NAMv4 to produce hourly NLDAS meteorological forcing first, and current NLDAS v2.0.5 forcing will re-generate first day forcing to replace previous forcing data. This will keep current nldas v2.0.5 is consistent so that the upgrade does not affect thousands of nlda susers. We produce extra four-day data to achieve real-time nldas system (zero day lag). This will be completed by 22z of the running day.
+

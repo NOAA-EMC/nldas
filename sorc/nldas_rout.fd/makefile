@@ -3,7 +3,6 @@ OBJS = 	rout.o  \
 	readcntl.o \
 	READ_REAL_SPATIAL.o \
 	READ_INT_SPATIAL.o \
-	CALC_LENGTH.o\
 	READ_RUNOFF.o\
 	READ_GRIB.o\
         grib2_wrt_g2func.o\
@@ -17,12 +16,13 @@ OBJS = 	rout.o  \
 # LIBS		A list of libraries to use 
 # PROGRAM	Name of the executable
 
-COMPILER=ifort -132 -convert big_endian
-INC = /nwprod/lib/incmod/g2_4
-LIBS=   -L /nwprod/lib -lg2_4 -lw3nco_4 -lw3emc_4 -lbacio_4 -ljasper -lpng -lz
+COMPILER=ifort
+INC = $(G2_INC4)
+LIBS=   ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
+
 
 PROGRAM=nldas_rout
-FFLAGS= -O3 -extend-source -I$(INC) -c
+FFLAGS= -O3 -extend-source -convert big_endian -I$(INC) -c
 
 $(PROGRAM): $(OBJS)
 	    $(COMPILER) $(OBJS) $(LIBS) -o $(PROGRAM)
@@ -44,9 +44,6 @@ READ_REAL_SPATIAL.o: READ_REAL_SPATIAL.f
 
 READ_INT_SPATIAL.o: READ_INT_SPATIAL.f
 	$(COMPILER) $(FFLAGS) READ_INT_SPATIAL.f -o READ_INT_SPATIAL.o
-
-CALC_LENGTH.o: CALC_LENGTH.f
-	$(COMPILER) $(FFLAGS) CALC_LENGTH.f -o CALC_LENGTH.o
 
 READ_RUNOFF.o: READ_RUNOFF.f
 	$(COMPILER) $(FFLAGS) READ_RUNOFF.f -o READ_RUNOFF.o

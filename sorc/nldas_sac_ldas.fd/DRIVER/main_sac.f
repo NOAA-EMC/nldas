@@ -79,6 +79,7 @@ CYX            FILENAME = 'fort.'//HOUR_CH//char(0)
             ENVVAR2 = 'FORT'//HOUR_CH//char(0)
             CALL GET_ENVIRONMENT_VARIABLE(ENVVAR2,FILENAME) 
 CYX            CALL READ_NOAH_GRIB(nldas,NOAHETP(1,1,I),FILENAME,lb,I+24)
+        write(*,*) 'FILENAME=', FILENAME
         CALL READ_NOAH_GRIB2(nldas,NOAHETP(1,1,I),FILENAME,I+24)
          END DO
       END IF

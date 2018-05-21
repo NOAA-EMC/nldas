@@ -39,15 +39,12 @@ OBJ =   obj/main_sac.o  	\
 # LIBS		A list of libraries to use 
 # PROGRAM	Name of the executable
 
-COMPILER = ifort -convert big_endian
-INC =           /nwprod/lib/incmod/g2_4
-#LIBS=   /nwprod/lib/libip_d.a \
-#        /nwprod/lib/libbacio_4.a \
-#        /nwprod/lib/libw3nco_4.a
-LIBS=   -L /nwprod/lib -lg2_4 -lw3nco_4 -lw3emc_4 -lbacio_4 -ljasper -lpng -lz
+COMPILER = ifort
+INC = $(G2_INC4)
+LIBS= ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
                             
 PROGRAM= nldas_sac_ldas
-FFLAGS= -O3 -extend-source -I$(INC) -c 
+FFLAGS= -O3 -extend-source -convert big_endian -I$(INC) -c 
 
 # These are the
 # actual rules which make uses to build corr.

@@ -3,7 +3,8 @@
 # This script runs the land data analysis for the NLDAS 4 models
 # Usage: exnldas_${model}.sh.ecf
 # History:  2013.05 c-shell by Youlong Xia (original owner)
-#           2013.05.17 converted to korn shell by Julia Zhu  
+#           2013.05.17 converted to korn shell by Julia Zhu
+#           2015.05.05 modified to nldas version 3 for actual real-time  
 ###################################################################
 set -x
 
@@ -12,31 +13,20 @@ cd $DATA
 msg="HAS BEGUN on `hostname`"
 postmsg "$jlogfile" "$msg"
 
-cdatem1=$PDYm1$cyc
-cdate=$PDY$cyc
+export CURRENTD=$PDY
+echo $CURRENTD
 
-# DEFINE THE LAST NARR FILE
-export LASTNARRFILE=${LASTNARRFILE:-$LOGDIR/nldas_prep_lastprocessed.log}
-
-# GET LAST NARR DAY PROCESSED - END OF FORCING ARCHIVE
-export RUNENDDATE=`cat $LASTNARRFILE`
-export RUNENDDATE=`finddate.sh $RUNENDDATE d-1`
-
-# FIND ENDTIME OF LAST ${MODEL} RUN
-export RUNSTARTDATE=`cat $LOGDIR/nldas_${model}_lastprocessed.log`
-export RUNSTARTDATE=`finddate.sh $RUNSTARTDATE d+1`
+# DEFINE THE STRATDATE AND ENDDATE
+export RUNSTARTDATE=$PDYm4
+export RUNENDDATE=$CURRENTD
 echo $RUNSTARTDATE $RUNENDDATE
-echo "USING $LASTRSTFILE to RESTART CURRENT ${MODEL} RUN"
-echo "RUNNING THROUGH: $RUNENDDATE"
+echo "RUNNING NOAH MODEL THROUGH: $RUNENDDATE"
 
-
-RUNSTARTDATE=${RUNSTARTDATE:-$cdatem1}
-RUNENDDATE=${RUNENDDATE:-$cdate}
 if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
   $USHnldas/nldas_${model}.sh $RUNSTARTDATE $RUNENDDATE 
 else
   echo " $RUNSTARTDATE is greater than $RUNENDDATE"
-  echo " check $LASTNARRFILE file RUNSTARTDATE should be less/eq than ${PDYm5} "
+  echo " check RUNSTARTDATE should be less/eq than ${PDY} "
   echo " $job exiting... "
   export err=99; err_chk;
 fi

@@ -4,16 +4,19 @@
 # Usage:   nldas_prep.sh start-date end-date
 # History:   2013.05  Youlong Xia  Original script in C-shell
 #            2013.06  Youlong Xia  Converted to Korn Shell
+#            2018.02  Youlong Xia  Modified for NLDAS v2.5 
 ##############################################################
 set -x
 
 export alert_type=${alert_type:-NLDAS_PREP}
 
+#using $PDY to output directory as 5-day run is put in today run
+
 cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_prep.sh start-date end-date"
-  err_exit 99
+  $DATA/err_exit 99
 fi
 
 sdate=$1
@@ -21,21 +24,15 @@ edate=$2
 
 export cyc=${cyc:-12}
 
-export nldas_ver=${nldas_ver:-v1.0.0}
-export HOMEnldas=${HOMEnldas:-/nwprod/nldas.${nldas_ver}}
-export FIXnldas=${FIXnldas:-$HOMEnldas/fix}
-export EXECnldas=${EXECnldas:-$HOMEnldas/exec}
-export PARMnldas=${PARMnldas:-$HOMEnldas/parm}
-
 while [ $sdate -le $edate ]; do
   year1=`echo $sdate |cut -c1-4`
-  year2=`/nwprod/util/ush/finddate.sh $sdate d+1 |cut -c1-4`
+  year2=`finddate.sh $sdate d+1 |cut -c1-4`
 
   day1=$sdate
-  day2=`/nwprod/util/ush/finddate.sh $sdate d+1`
+  day2=`finddate.sh $sdate d+1`
 
   export pgm=nldas_prep
-  . prep_step
+  . $DATA/prep_step
   
   echo 'Here we start to run nldas forcing generation'
   # BUILD the ldas.crd file for a realtime update
@@ -47,7 +44,7 @@ while [ $sdate -le $edate ]; do
   cp -p $FIXnldas/prep/tables/KPDS_completemosaic.force.narr.tbl $DATA
   cp -p $FIXnldas/prep/tables/KPDS_completemosaic.force.narr.grib2.tbl $DATA  
 
-  export SDAY=`/nwprod/util/ush/finddate.sh $sdate d-2`
+  export SDAY=`finddate.sh $sdate d-2`
   export SDA=`echo $SDAY | cut -c 7-8`
   export SMO=`echo $SDAY | cut -c 5-6`
   export SYR=`echo $SDAY | cut -c 1-4`
@@ -83,16 +80,17 @@ while [ $sdate -le $edate ]; do
   ln -s  $FIXnldas/prep/BCS $DATA/BCS
 
   # Run the code with the updated LIS nldas card (ldas.crd)
-  $EXECnldas/nldas_prep
-  export err=$?; err_chk
+  startmsg
+  $EXECnldas/nldas_prep >> $pgmout 2>>errfile
+  export err=$?; $DATA/err_chk
 
-  sdate1=`/nwprod/util/ush/finddate.sh $sdate d+1`
+  sdate1=`finddate.sh $sdate d+1`
 
   if [ ${SENDCOM:-YES} = YES ]; then
 
   # Copy sdate1 ouput files to /com:
 
-  export COM_OUT=${COM_OUT:-/com/nldas/${envir}}
+  export COM_OUT=${COM_OUT:-$COMROOTp1/nldas/${envir}}
   # copy 00Z a and b nldas forcing file
   export outdir1=$DATA/OUTPUT/EXP888/FOR/$year2/$sdate1
   export asufix=nldasforce-a.grb
@@ -106,30 +104,45 @@ while [ $sdate -le $edate ]; do
    mkdir -p $outdir1
    fi
 	
-  export COMFOR1=$COM_OUT/nldas.$sdate1
+  export COMFOR1=$COM_OUT/nldas.$PDY
   if [ -s $COMFOR1 ]; then
    echo $COMFOR1 exists
    else
    mkdir -p $COMFOR1
    fi
+# copy the forcing to tomorrow run directory
+   export COMFOR2=$COM_OUT/nldas.$PDYp1
+   if [ -s $COMFOR2 ]; then
+   echo $COMFOR2 exists
+   else
+   mkdir -p $COMFOR2
+   fi
 
-  mv $outdir1/${sdate1}00.${asufix}  $COMFOR1/nldas.t${cyc}z.force-a.grbf00
-  mv $outdir1/${sdate1}00.${asufix}2 $COMFOR1/nldas.t${cyc}z.force-a.grb2f00
-  mv $outdir1/${sdate1}00.${bsufix}2 $COMFOR1/nldas.t${cyc}z.force-b.grb2f00
+  mv $outdir1/${sdate1}00.${asufix}  $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grbf00
+  mv $outdir1/${sdate1}00.${asufix}2 $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grb2f00
+  mv $outdir1/${sdate1}00.${bsufix}2 $COMFOR1/nldas.t${cyc}z.${sdate1}.force-b.grb2f00
+
+  cp $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grbf00 $COMFOR2/nldas.t${cyc}z.${sdate1}.force-a.grbf00
+  cp $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grb2f00 $COMFOR2/nldas.t${cyc}z.${sdate1}.force-a.grb2f00
+  cp  $COMFOR1/nldas.t${cyc}z.${sdate1}.force-b.grb2f00 $COMFOR2/nldas.t${cyc}z.${sdate1}.force-b.grb2f00
 
   if [ $SENDDBN = YES ]; then
-       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-a.grb2f00
-       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-b.grb2f00
+   $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grb2f00
+   $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate1}.force-b.grb2f00
     fi
     hh=01
     while [ $hh -le 12 ]; do
-    mv $outdir1/${sdate1}${hh}.${asufix} $COMFOR1/nldas.t${cyc}z.force-a.grbf${hh}
-    mv $outdir1/${sdate1}${hh}.${asufix}2 $COMFOR1/nldas.t${cyc}z.force-a.grb2f${hh}
-    mv $outdir1/${sdate1}${hh}.${bsufix}2 $COMFOR1/nldas.t${cyc}z.force-b.grb2f${hh}
+    mv $outdir1/${sdate1}${hh}.${asufix} $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grbf${hh}
+    mv $outdir1/${sdate1}${hh}.${asufix}2 $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grb2f${hh}
+    mv $outdir1/${sdate1}${hh}.${bsufix}2 $COMFOR1/nldas.t${cyc}z.${sdate1}.force-b.grb2f${hh}
 
-      if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-a.grb2f${hh}
-         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.force-b.grb2f${hh}
+    cp $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grbf${hh} $COMFOR2/nldas.t${cyc}z.${sdate1}.force-a.grbf${hh}
+    cp $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grb2f${hh} $COMFOR2/nldas.t${cyc}z.${sdate1}.force-a.grb2f${hh}
+    cp $COMFOR1/nldas.t${cyc}z.${sdate1}.force-b.grb2f${hh} $COMFOR2/nldas.t${cyc}z.${sdate1}.force-b.grb2f${hh}
+      
+    if [ $SENDDBN = YES ]; then
+    $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate1}.force-a.grb2f${hh}
+    $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate1}.force-b.grb2f${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi
@@ -145,35 +158,35 @@ while [ $sdate -le $edate ]; do
    mkdir -p $outdir
    fi
 
-   export COMFOR=$COM_OUT/nldas.$sdate
-   if [ -s $COMFOR ]; then
-   echo $COMFOR exists
-   else
-   mkdir -p $COMFOR
-   fi
-
-  mv $outdir/${sdate}00.${asufix}  $COMFOR/nldas.t${cyc}z.force-a.grbf00
-  mv $outdir/${sdate}00.${asufix}2  $COMFOR/nldas.t${cyc}z.force-a.grb2f00
-  mv $outdir/${sdate}00.${bsufix}2  $COMFOR/nldas.t${cyc}z.force-b.grb2f00
+  mv $outdir/${sdate}00.${asufix}  $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grbf00
+  mv $outdir/${sdate}00.${asufix}2  $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grb2f00
+  mv $outdir/${sdate}00.${bsufix}2  $COMFOR1/nldas.t${cyc}z.${sdate}.force-b.grb2f00
+ 
+  cp $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grbf00 $COMFOR2/nldas.t${cyc}z.${sdate}.force-a.grbf00
+  cp $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grb2f00 $COMFOR2/nldas.t${cyc}z.${sdate}.force-a.grb2f00
+  cp $COMFOR1/nldas.t${cyc}z.${sdate}.force-b.grb2f00 $COMFOR2/nldas.t${cyc}z.${sdate}.force-b.grb2f00
 
   if [ $SENDDBN = YES ]; then
-       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-a.grb2f00
-       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-b.grb2f00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grb2f00
+       $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate}.force-b.grb2f00
    fi
     hh=01
     while [ $hh -le 23 ]; do
-    mv $outdir/${sdate}${hh}.${asufix} $COMFOR/nldas.t${cyc}z.force-a.grbf${hh}
-    mv $outdir/${sdate}${hh}.${asufix}2 $COMFOR/nldas.t${cyc}z.force-a.grb2f${hh}
-    mv $outdir/${sdate}${hh}.${bsufix}2 $COMFOR/nldas.t${cyc}z.force-b.grb2f${hh}
+    mv $outdir/${sdate}${hh}.${asufix} $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grbf${hh}
+    mv $outdir/${sdate}${hh}.${asufix}2 $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grb2f${hh}
+    mv $outdir/${sdate}${hh}.${bsufix}2 $COMFOR1/nldas.t${cyc}z.${sdate}.force-b.grb2f${hh}
+    cp $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grbf${hh}  $COMFOR2/nldas.t${cyc}z.${sdate}.force-a.grbf${hh}
+    cp $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grb2f${hh} $COMFOR2/nldas.t${cyc}z.${sdate}.force-a.grb2f${hh} 
+    cp $COMFOR1/nldas.t${cyc}z.${sdate}.force-b.grb2f${hh} $COMFOR2/nldas.t${cyc}z.${sdate}.force-b.grb2f${hh}
+
       if [ $SENDDBN = YES ]; then
-         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-a.grb2f${hh}
-         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR/nldas.t${cyc}z.force-b.grb2f${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate}.force-a.grb2f${hh}
+         $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMFOR1/nldas.t${cyc}z.${sdate}.force-b.grb2f${hh}
       fi
       let "hh=hh+1"
       if [ $hh -lt 10 ]; then hh=0$hh; fi
     done
     fi
  
-  echo $sdate1 >$LOGDIR/nldas_prep_lastprocessed.log
-  sdate=`/nwprod/util/ush/finddate.sh $sdate1 d+1`
+  sdate=`finddate.sh $sdate1 d+1`
 done
