@@ -99,7 +99,6 @@ while [ $sdate -le $edate ]; do
    else
    mkdir -p $pcmorph
    fi
-
    
    hh=00
    while [ $hh -le 23 ]
