@@ -39,9 +39,14 @@ while [ $sdate -le $edate ]; do
    export pgm=cpc_precip_convert
    . prep_step
 
+   if [ -s $val_conus_in ]; then
    cp -p $val_conus_in $DATA/cpcops.bin
+   fi
+
+   if [ -s $val_globe_in ]; then
    cp -p $val_globe_in $DATA/cpc_global.bin
-   
+   fi
+
    echo 'converting cpc conus and global precip to nldas domain and format'
    startmsg
    $EXECnldas/cpc_precip_convert >> $pgmout 2>errfile
@@ -102,7 +107,11 @@ while [ $sdate -le $edate ]; do
      # JY - old name 201511: val_cmorph=advt-8km-interp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
      val_cmorph=CMORPH_8KM-30MIN_${today}${hh}
      val_cmorph_new=advt-8km-intrp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
+
+     if [ -s $dir_cmorph/$val_cmorph ]; then
      cp -p $dir_cmorph/$val_cmorph $pcmorph/$val_cmorph_new
+     fi
+
      hh=`expr $hh + 1`
      if [ $hh -lt 10 ]; then hh=0$hh; fi
    done
