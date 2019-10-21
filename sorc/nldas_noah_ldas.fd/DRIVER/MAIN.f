@@ -88,8 +88,9 @@ C     DO I = 1, (NHOUR-1)
 CJZ         FILENAME = 'fort.'//HOUR_CH//char(0)
          ENVVAR = 'FORT'//HOUR_CH//char(0)
          CALL GET_ENVIRONMENT_VARIABLE(ENVVAR,FILENAME)
-C         WRITE(*,*) 'reading atmospheric data ', FILENAME
-C         WRITE(*,*) 'reading atmospheric data on unit', I
+         WRITE(*,*) 'reading atmospheric data ', FILENAME
+         WRITE(*,*) 'reading atmospheric data on unit', I
+  
          CALL READ_FORCING(NLDAS,F,TAIR(1,1,I),SPFH(1,1,I),PSFC(1,1,I),
      &        UWIND(1,1,I),VWIND(1,1,I),LWDN(1,1,I),EDASPREC,
      &        CAPE,CONVPREC,PRCP(1,1,I),SOLDN(1,1,I),LB,FILENAME,I)

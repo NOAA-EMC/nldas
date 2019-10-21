@@ -5,7 +5,7 @@
 **********************************************************************/
 
 /***** If TRUE include all model messages to stdout, and stderr *****/
-#define VERBOSE FALSE
+#define VERBOSE TRUE
 
 /***** If TRUE limit output data to runoff and baseflow for optimization *****/
 #define OPTIMIZE FALSE

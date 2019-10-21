@@ -425,7 +425,7 @@ soil_con_struct read_soilparam_arc(FILE *soilparam,
       if(temp.Wpwp[layer] > temp.Wcr[layer])
         nrerror("Wpwp is greater then Wcr");
       if(temp.init_moist[layer] < temp.Wpwp[layer]) { 
-/***	fprintf(stderr,"Initial soil moisture (%f) is less than the wilting point (%f) for layer %i\n\tResetting soil moisture to equal wilting point\n",temp.init_moist[layer],temp.Wpwp[layer],layer); ***/
+	fprintf(stderr,"Initial soil moisture (%f) is less than the wilting point (%f) for layer %i\n\tResetting soil moisture to equal wilting point\n",temp.init_moist[layer],temp.Wpwp[layer],layer);
 	temp.init_moist[layer] = temp.Wpwp[layer];
       }
     }

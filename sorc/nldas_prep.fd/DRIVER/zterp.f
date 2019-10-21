@@ -132,7 +132,7 @@ C       Compute time interval, here arbitrarily divided into 36 parts
                 CALL COSZENITH(LON,LAT,LHOUR,ZONE,JULIANMB,CZMODEL)
 		IF (CZMODEL.EQ.0) THEN
 			WEIGHT1=0
-			RETURN
+			GOTO 818
 		ENDIF
 
                 IF (ETIME.GT.BTIME) THEN
@@ -261,7 +261,7 @@ C
 
 
         ENDIF
- 
+ 818	CONTINUE
 	RETURN
         END
 
@@ -413,7 +413,7 @@ C
          IF (LON.LT.(-187.5+(15*i))) THEN
             ZONE=I
             IF (ZONE.eq.25) ZONE=1
-            EXIT
+            GO TO 60
          END IF
       END DO
 C
@@ -424,7 +424,7 @@ C
 C     There is also a correction for LHOUR < 0 and LHOUR > 23
 C     to LHOUR between 0 and 23.
 C
-      IF (ZONE.LT.13) THEN
+ 60   IF (ZONE.LT.13) THEN
          CHANGE=ZONE-13
          LHOUR=GMT+CHANGE
       ELSEIF (ZONE.eq.13) THEN

@@ -122,7 +122,7 @@ C       Compute time interval, here arbitrarily divided into 36 parts
                 CALL COSZENITH(LON,LAT,LHOUR,ZONE,JULIANMB,CZMODEL)
                 IF (CZMODEL.EQ.0) THEN
                         WEIGHT1=0
-                        RETURN
+                        GOTO 818
                 ENDIF
 
                 IF (ETIME.GT.BTIME) THEN
@@ -266,6 +266,6 @@ c                       STOP
 
 
         ENDIF
- 
+ 818    CONTINUE
         RETURN
         END

@@ -1,33 +1,33 @@
 #!/bin/ksh
 set -x
 
-#export cyc=`date +%H`
-
-pday=`date -u +%Y%m%d`
-pcyc=`date +%H`
-
-pdate=$pday$pcyc
-
-export PDY=`ndate -3 $pdate|cut -c1-8`
+export PDY=`date -u +%Y%m%d`
 export cyc=12
+echo $PDY
+export nldas_ver=${nldas_ver:-v2.0.6}
 
-cd /land/save/Youlong.Xia/nldas.v2.5.2/lsf
+cd /gpfs/dell2/emc/modeling/noscrub/$LOGNAME/nldas.${nldas_ver}/lsf
 
-export PATH="$PATH:./"
-. /usrx/local/Modules/default/init/ksh
-module load ibmpe
-module load lsf
-module load ics
+. /usrx/local/prod/lmod/lmod/init/profile
+module purge
 
-bsub <jnldas_prep1_12.ecf
-bsub <jnldas_prep2_12.ecf
+module load EnvVars/1.0.2
+module load lsf/10.1
+module load ips/18.0.1.163
+module load impi/18.0.1
+
+module load prod_envir/1.0.2
+module load prod_util/1.1.0
+module load grib_util/1.1.0
+
+bsub <jnldas_prep_12.ecf
 bsub <jnldas_noah_12.ecf
-bsub <jnldas_rout_noah_12.ecf
 bsub <jnldas_mosaic_12.ecf
-bsub <jnldas_rout_mosaic_12.ecf
-bsub <jnldas_sac_12.ecf
-bsub <jnldas_rout_sac_12.ecf
 bsub <jnldas_vic_12.ecf
+bsub <jnldas_sac_12.ecf
+bsub <jnldas_rout_noah_12.ecf
+bsub <jnldas_rout_mosaic_12.ecf
 bsub <jnldas_rout_vic_12.ecf
+bsub <jnldas_rout_sac_12.ecf
 
 exit

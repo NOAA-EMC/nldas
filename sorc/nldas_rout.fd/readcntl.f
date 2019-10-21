@@ -34,8 +34,9 @@ C     READS A CONTROL FILE AND INPUT PARAMETERS FOR ROUTING MODEL
       DO I = 1, NX*NY
          IF (ORDER(1,I) .EQ. 0) THEN
             ORDER_N = I - 1
-            EXIT
+            GOTO 100
          END IF
       END DO
+ 100  CONTINUE
 
       END

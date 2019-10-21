@@ -79,7 +79,6 @@ CYX            FILENAME = 'fort.'//HOUR_CH//char(0)
             ENVVAR2 = 'FORT'//HOUR_CH//char(0)
             CALL GET_ENVIRONMENT_VARIABLE(ENVVAR2,FILENAME) 
 CYX            CALL READ_NOAH_GRIB(nldas,NOAHETP(1,1,I),FILENAME,lb,I+24)
-        write(*,*) 'FILENAME=', FILENAME
         CALL READ_NOAH_GRIB2(nldas,NOAHETP(1,1,I),FILENAME,I+24)
          END DO
       END IF
@@ -353,12 +352,11 @@ C100               format(A8,i2.2,6f8.4,6f8.2,i2,21f8.2)
          SH2O = SMC
          
          LUGB = NHOUR + 1
-
+        
          CALL GRIBOUT(NX,NY,LDASMASK,NSOLD,NT-1,YESTERDAY,TODAY,
      &        LIQUID_PREC, FROZEN_PREC, ETA, ETP,
      &        RUNOFF1,RUNOFF2, SNOWMELT, SNEQV, SNOWH, SMC, 
      &        SH2O,SOILM,DUMMY,LUGB)
-         
       END DO
       
       WRITE(*,*) 'writing restart files'

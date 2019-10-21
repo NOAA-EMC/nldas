@@ -3,9 +3,7 @@
 !-----------------------------------------------------------------
 ! ABSTRACT: This routine is to write out a new grib2 file
 !   March 2013:     J.Wang
-!   23 September 2013: Revised by Youlong Xia for NLDAS output
-!   11 July 2016: Revised by Y Xia (change Order of spatial difference 
-!                 from 2 to 1 to avoid grib2 output issue           
+!   23 September 2013: Revised by Youlong Xia for NLDAS output   
 !-----------------------------------------------------------------
 !
       implicit none
@@ -210,16 +208,15 @@
       idrstmpl(7)=0             ! Missing value management used (see Code Table 5.5)
       idrstmpl(8)=0             ! Primary missing value substitute
       idrstmpl(9)=0             ! Secondary missing value substitute 
-      idrstmpl(17)=1            ! Order of spatial difference (see Code Table 5.6) 
+      idrstmpl(17)=2            ! Order of spatial difference (see Code Table 5.6) 
 !
 !-- section 6:       
       ibmap=0  ! Bit-map indicator (Table 6.0) (0:A bit map applies, 255:A bit map doesn't apply)
 !
       call addfield(cgrib,max_bytes,ipdsnum,ipdstmpl,ipdstmpllen,coordlist,
      &numcoord,idrsnum,idrstmpl,idrstmpllen,fld,nx*ny,ibmap,bmap,ierr)
-      if(ierr.ne.0) then
-      print*,'addfield status=',ierr, 'please check addffield status'
-      endif
+!      print*,'addfield status=',ierr
+
 !-- finalize  GRIB message after all section
 !-- adds the End Section ( "7777" )
       call gribend(cgrib,max_bytes,lengrib,ierr)

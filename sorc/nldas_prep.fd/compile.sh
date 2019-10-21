@@ -19,7 +19,12 @@
 ##  1 Oct 1999: Jared Entin; Initial code
 ##  15 Oct 1999: Paul Houser; General Revision
 ##  31 Jan 2003: Jon Gottschalck; Updated for CLM2 checks
+##  14 Mar 2019  Youlong Xia, WCOSS phase 3
 ##=========================================================================
+cd MAKDEP
+gmake
+cd ..
+cp ./MAKDEP/makdep makdep
 gmake clean
 gmake
 

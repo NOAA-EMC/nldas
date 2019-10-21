@@ -92,7 +92,8 @@ C***********************************************************************
       CHARACTER CENT*2, CHOUR*2, GRIBFILE*256
       CHARACTER*19 VANAM 
 
-C     read past header info in KPDS.tbl 
+C     read past header info in KPDS.tbl
+      OPEN (UNIT = 30, FILE = 'KPDS.tbl') 
       DO K = 1, 42
          READ(30,*)
       END DO

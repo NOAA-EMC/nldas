@@ -51,7 +51,7 @@ C          WRITE(*,*) ' kpds = ', kpds, ' jpds = ', jpds
           IF (iret .NE. 0) THEN
              OPEN(80, file='stop.file')
              WRITE(80,*) 'SAC model stopped in Reading Forcing'
-             WRITE(*,*) 'NLDAS forcing data: IRET=', iret
+             WRITE(*,*) 'IRET=', iret
              WRITE(*,*) 'STOP SAC MODEL in Reading Forcing'
              STOP
           END IF

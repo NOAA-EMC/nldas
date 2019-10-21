@@ -44,7 +44,7 @@ INC = $(G2_INC4)
 LIBS= ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
                             
 PROGRAM= nldas_sac_ldas
-FFLAGS= -O3 -extend-source -convert big_endian -I$(INC) -c 
+FFLAGS= -O3 -g -extend-source -convert big_endian -I$(INC) -c 
 
 # These are the
 # actual rules which make uses to build corr.

@@ -15,8 +15,9 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_noah.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
+
 
 sdate=$1
 edate=$2
@@ -38,14 +39,19 @@ while [ $sdate -le $edate ]; do
    
    export pgm=cpc_precip_convert
    . prep_step
-
-   cp -p $val_conus_in $DATA/cpcops.bin
-   cp -p $val_globe_in $DATA/cpc_global.bin
    
+   if [ -s $val_conus_in ]; then
+   cp -p $val_conus_in $DATA/cpcops.bin
+   fi
+
+   if [ -s $val_globe_in ]; then
+   cp -p $val_globe_in $DATA/cpc_global.bin
+   fi
+
    echo 'converting cpc conus and global precip to nldas domain and format'
-   startmsg
+   startmsg 
    $EXECnldas/cpc_precip_convert >> $pgmout 2>errfile
-   export err=$?; $DATA/err_chk
+   export err=$?; err_chk
 
    #To setup directory for date stored 
    export pconus=$DATA/PRECIP.PRISM.NEW/$yearmon
@@ -102,7 +108,9 @@ while [ $sdate -le $edate ]; do
      # JY - old name 201511: val_cmorph=advt-8km-interp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
      val_cmorph=CMORPH_8KM-30MIN_${today}${hh}
      val_cmorph_new=advt-8km-intrp-prim-sat-spat-2lag-2.5+5dovlp8kmIR-${today}${hh}
+     if [ -s $dir_cmorph/$val_cmorph ]; then
      cp -p $dir_cmorph/$val_cmorph $pcmorph/$val_cmorph_new
+     fi
      hh=`expr $hh + 1`
      if [ $hh -lt 10 ]; then hh=0$hh; fi
    done
@@ -119,7 +127,7 @@ while [ $sdate -le $edate ]; do
 
    for hh in 00 03 06 09 12 15 18 21
    do
-   export val_rcdas=$COMIN_RCDAS/rcdas.${today}/rcdas.t${hh}z.awip32.merged
+   export val_rcdas=$COMINrcdas/rcdas.${today}/rcdas.t${hh}z.awip32.merged
    export newfile=$DATA/NARR/$year/$today/${today}${hh}.NARR.grb
    cp $val_rcdas $DATA/merged_AWIP32.${today}${hh}
    export bigfile=$DATA/merged_AWIP32.${today}${hh}
@@ -162,3 +170,4 @@ while [ $sdate -le $edate ]; do
 
    sdate=`finddate.sh $sdate d+1`
    done
+

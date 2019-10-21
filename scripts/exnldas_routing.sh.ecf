@@ -17,17 +17,17 @@ echo $CURRENTD
 
 # DEFINE THE STRATDATE AND ENDDATE
 export RUNSTARTDATE=$PDYm4
-export RUNENDDATE=$CURRENTD
+export RUNENDDATE=$PDYm4
 echo $RUNSTARTDATE $RUNENDDATE
 echo "RUNNING ROUTING MODEL THROUGH: $RUNENDDATE"
 
-# RUN ROUTING MODEL 
+# RUN ROUTING MODEL
 
 if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
   $USHnldas/nldas_routing.sh $RUNSTARTDATE $RUNENDDATE 
 else
   echo " $RUNSTARTDATE is greater than $RUNENDDATE"
-  echo " check RUNENDDATE should be less/eq than ${PDY} "
+  echo " check if RUNENDDATE is less/eq than ${PDYm4} "
   echo " $job exiting... "
   export err=99; err_chk;
 fi

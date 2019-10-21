@@ -2,32 +2,30 @@
 # This parameter file set up the environment variables used in
 # the J-Job scripts to run the nldas land analsis system
 ##################################################################
-# Load prod_util and grib_util
-. /usrx/local/Modules/default/init/ksh
-module load prod_util
-module load grib_util
-module load prod_envir
+# module load for untility in run_all of lsf directory 
 
-export model_ver=${model_ver:-v2.5.2}
-export HOMEnldas=${HOMEnldas:-/land/save/$LOGNAME/nldas.${model_ver}}
+export workdir=/gpfs/dell2/emc/modeling/noscrub
+
+export nldas_ver=${nldas_ver:-v2.0.6}
+export HOMEnldas=${HOMEnldas:-$workdir/$LOGNAME/nldas.${nldas_ver}}
 export EXECnldas=${EXECnldas:-$HOMEnldas/exec}
 export PARMnldas=${PARMnldas:-$HOMEnldas/parm}
 export FIXnldas=${FIXnldas:-$HOMEnldas/fix}
 
-export COM_IN=/land2/noscrub/$LOGNAME/com/nldas.${model_ver}/dev
-export COM_OUT=/land2/noscrub/$LOGNAME/com/nldas.${model_ver}/dev
+
+export COM_IN=${COM_IN:-$workdir/$LOGNAME/com/nldas.${nldas_ver}/dev}
+export COM_OUT=${COM_OUT:-$COM_IN}
 
 # set up com and decom directory used
+export COMROOTd2=/gpfs/dell2/nco/ops
+export DCOMROOT=/gpfs/dell1/nco/ops/dcom
+export COMROOTp1=/gpfs/tp1/nco/ops/com
 
-export COMIN_RCDAS=${COMIN_RCDAS:-${COMROOT}/rcdas/prod}
-export COMIN_NDAS=${COMIN_NDAS:-${COMROOTp2}/nam/prod}
-export DCOM_IN=${DCOM_IN:-${DCOMROOT}/us007003}
-export COMINpcpanl=${COMINpcpanl:-${COMROOTp2}/pcpanl/prod}
-export COMIN_NAM=${COMIN_NAM:-$COMROOTp2/nam/prod}
+export COMINrcdas=${COMINrcdas:-${COMROOTp1}/rcdas/prod}
+export COMINpcpanl=${COMINpcpanl:-${COMROOTd2}/pcpanl/prod}
+export DCOM_IN=${DCOM_IN:-${DCOMROOT}/prod}
 
-
-
-export DATA_IN=/ptmpp2/$LOGNAME/tmpnwprd
+export DATA_IN=/gpfs/dell2/ptmp/$LOGNAME/tmpnwprd
 export jlogfile=$DATA_IN/jlogfile
 
 export SENDCOM=${SENDCOM:-YES}

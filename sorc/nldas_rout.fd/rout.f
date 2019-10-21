@@ -23,7 +23,7 @@ C     LTR   -- length of transport unit-hydrograph in DT
       INTEGER LTR
       INTEGER NLDAS
       INTEGER HOUR, HOUR1
-      INTEGER jret
+      INTEGER jret, lugb
       
       PARAMETER (NX    = 464)
       PARAMETER (NY    = 224)
@@ -57,8 +57,8 @@ C     LTR   -- length of transport unit-hydrograph in DT
       CHARACTER*8 DAYS, DAYS0
       CHARACTER*4 YEARS, YEARS0
       CHARACTER*11  CNTRFL
-      CHARACTER*150 initial_1, initial_2, order_file, uh_file_1, uh_file_2
-      CHARACTER*150 filename
+      CHARACTER*100 initial_1, initial_2, order_file, uh_file_1, uh_file_2
+      CHARACTER*100 filename
       CHARACTER*11 ENVVAR
       
       CHARACTER*100 FILEOUT, routing_out
@@ -93,9 +93,10 @@ C     DEFINE THE OUTPUT MASK FOR GRIB FILES.
       DO I = 1, NX*NY
          IF (ORDER(1,I) .EQ. 0) THEN
             ORDER_N = I - 1
-            EXIT
+            GOTO 20
          END IF
       END DO
+ 20   CONTINUE
 
       CALL CALC_AREA(NX,NY,AREA,DT)
       OPEN(17, FILE = 'days0.txt')
@@ -121,9 +122,12 @@ C     for baseflow
       jpdt2(11)=0
       jpdt2(12)=0
 
+         lugb=0 
          DO j = 0, 23
             HOUR=J+1
             HOUR1=J
+            lugb=lugb+1
+
             WRITE(hourchar,'(I2.2)') HOUR
 CJZ            filename = 'fort.'//hourchar//char(0)
             ENVVAR = 'FORT'//hourchar//char(0)
@@ -133,10 +137,11 @@ CJZ            filename = 'fort.'//hourchar//char(0)
 C            WRITE(*,*) filename
 CYX            CALL READ_GRIB(NLDAS,SURFACE_RUNOFF,FILENAME,LB,59,235,0)
 CYX            CALL READ_GRIB(NLDAS,BASEFLOW,FILENAME,LB,59,234,0)
-            CALL READ_NOAH_GRIB2(NLDAS,SURFACE_RUNOFF,FILENAME,59,jpdt1)       
-            CALL READ_NOAH_GRIB2(NLDAS,BASEFLOW,FILENAME,59,jpdt2)
-c            write(*,'(f7.4)') SURFACE_RUNOFF(375,108)
-c            write(*,'(f7.4)') BASEFLOW(375,108)
+            CALL READ_NOAH_GRIB2(NLDAS,SURFACE_RUNOFF,FILENAME,lugb,jpdt1)
+            CALL READ_NOAH_GRIB2(NLDAS,BASEFLOW,FILENAME,lugb,jpdt2)
+            write(*,'(f7.4)') SURFACE_RUNOFF(375,108)
+            write(*,'(f7.4)') BASEFLOW(375,108)
+            
             CALL ROUT_IT(NX,NY,LUH,LTR,SURFACE_RUNOFF,BASEFLOW,
      &           STREAMFLOW,RUNOFF_INTERN,RUNOFF_TRANS,UH_INTERN,UH_TRANS,
      &           ORDER,ORDER_N,AREA)

@@ -86,7 +86,7 @@ veg_con_struct *read_vegparam(FILE *vegparam,
       nrerror(str);
     }
     if(sum != 1.) {
-/**      fprintf(stderr,"WARNING: Root zone fractions sum to more than 1 ( = %f), normalizing fractions.  If the sum is large, check that your vegetation parameter file is in the form - <zone 1 depth> <zone 1 fract> <zone 2 depth> <zone 2 fract> ...\n", sum); **/
+      fprintf(stderr,"WARNING: Root zone fractions sum to more than 1 ( = %f), normalizing fractions.  If the sum is large, check that your vegetation parameter file is in the form - <zone 1 depth> <zone 1 fract> <zone 2 depth> <zone 2 fract> ...\n", sum);
       for(j=0;j<options.ROOT_ZONES;j++) {
 	temp[i].zone_fract[j] /= sum;
       }
@@ -111,13 +111,13 @@ veg_con_struct *read_vegparam(FILE *vegparam,
     
   }
   if(temp[0].Cv_sum>1.0){
-/**    fprintf(stderr,"WARNING: Cv exceeds 1.0 at grid cell %d, fractions being adjusted to equal 1\n", gridcel); YXia **/
+    fprintf(stderr,"WARNING: Cv exceeds 1.0 at grid cell %d, fractions being adjusted to equal 1\n", gridcel);
     for(j=0;j<vegetat_type_num;j++)
       temp[j].Cv = temp[j].Cv / temp[0].Cv_sum;
     temp[0].Cv_sum = 1.;
   }
   if(temp[0].Cv_sum>0.99 && temp[0].Cv_sum<1.0){
-/**    fprintf(stderr,"WARNING: Cv > 0.99 and Cv < 1.0 at grid cell %d, model assuming that bare soil is not to be run - fractions being adjusted to equal 1\n", gridcel); YXia **/
+    fprintf(stderr,"WARNING: Cv > 0.99 and Cv < 1.0 at grid cell %d, model assuming that bare soil is not to be run - fractions being adjusted to equal 1\n", gridcel);
     for(j=0;j<vegetat_type_num;j++)
       temp[j].Cv = temp[j].Cv / temp[0].Cv_sum;
     temp[0].Cv_sum = 1.;

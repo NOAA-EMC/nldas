@@ -207,20 +207,21 @@
       idrstmpl(7)=0             ! Missing value management used (see Code Table 5.5)
       idrstmpl(8)=0             ! Primary missing value substitute
       idrstmpl(9)=0             ! Secondary missing value substitute 
-      idrstmpl(17)=1            ! Order of spatial difference (see Code Table 5.6) 
+      idrstmpl(17)=2            ! Order of spatial difference (see Code Table 5.6) 
 !
 !-- section 6:       
       ibmap=0  ! Bit-map indicator (Table 6.0) (0:A bit map applies, 255:A bit map doesn't apply)
 !
       call addfield(cgrib,max_bytes,ipdsnum,ipdstmpl,ipdstmpllen,coordlist,
      &numcoord,idrsnum,idrstmpl,idrstmpllen,fld,nx*ny,ibmap,bmap,ierr)
-      if(ierr.ne.0) then
-      print*,'addfield status=',ierr, 'please check addffield status'
-      endif
+!      print*,'addfield status=',ierr
+
 !-- finalize  GRIB message after all section
 !-- adds the End Section ( "7777" )
       call gribend(cgrib,max_bytes,lengrib,ierr)
-!      print*,'gribend status=',ierr
+      if(ierr.ne.0) then
+      print*,'gribend status=',ierr, 'please check addffield status'
+      endif
 !      print*,'length of the final GRIB2 message in octets =',lengrib
 !
       call wryte(ifilw, lengrib, cgrib)

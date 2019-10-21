@@ -54,8 +54,9 @@ C***********************************************************************
       CHARACTER*12 VANAM
 
 C     read past header info in KPDS.tbl
+      OPEN (UNIT = 30, FILE = 'KPDS.tbl') 
       DO K = 1, 42
-         READ(80,*)
+         READ(30,*)
       END DO
 
 C     MAKE OUTPUT FILENAME
@@ -75,7 +76,7 @@ C     OPEN GRIB FILE
 
       NLDAS = NX * NY
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     ARAIN,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -83,7 +84,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     ASNOW,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -91,7 +92,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     EVP,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -99,7 +100,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     PEVPR,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -107,7 +108,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     SSRUN,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -115,7 +116,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     BGRUN,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -129,7 +130,7 @@ C     OPEN GRIB FILE
                DUMMY(I,J) = SOILM(N,I,J)
             END DO
          END DO
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     DUMMY,IPTABLE,LUGB,IRET)
          IF (IRET .NE. 0) THEN
@@ -138,7 +139,7 @@ C     OPEN GRIB FILE
          END IF
       END DO
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     TSOILM,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -147,7 +148,7 @@ C     OPEN GRIB FILE
       END IF
 
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     SNOM,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -155,7 +156,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     WEASD,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -163,7 +164,7 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      READ (80,*) VANAM, (IPTABLE(I),I=1,13)
+      READ (30,*) VANAM, (IPTABLE(I),I=1,13)
       CALL grib2_wrt_g2func(LDASMASK,HOUR1,YESTERDAY,TODAY,
      +     SNOD,IPTABLE,LUGB,IRET)
       IF (IRET .NE. 0) THEN
@@ -171,6 +172,6 @@ C     OPEN GRIB FILE
          STOP
       END IF
 
-      CLOSE (80)
+      CLOSE (30)
 
       END

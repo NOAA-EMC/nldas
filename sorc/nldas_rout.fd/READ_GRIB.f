@@ -19,6 +19,7 @@
       character filnam*100
 
 !     open grib2 file
+!      write(*,*) 'check file name', trim(filnam) 
       call baopenr (lugb, trim(filnam), jret)
       if (jret.ne.0) then
        print *, 'jret=',jret
@@ -43,6 +44,7 @@
 !-- set product def array
       jgdt=-9999      
       call getgb2(lugb,0,j,jdisc,jids,jpdtn,jpdt,jgdtn,jgdt,unpack,k,gfld,iret)
+      
       if ( iret.ne.0) then
             print *,' getgb2 error = ',iret
       endif

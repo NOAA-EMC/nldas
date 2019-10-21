@@ -1,5 +1,0 @@
-For forcing generation, run real-time part (jnldas_prep1_12.ecf) first, and then run current OPS NLDAS-2 forcing generation. The purpose for this design is to keep the current OPS NLDAS system forcing as the best forcing. It will cover half day real-time NLDAS system forcing.
-
-To keep the current OPS NLDAS-2 system as usual and to add extra capacity to achieve to produce realtime product
-
-8 May 2018, Youlong Xia

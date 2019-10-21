@@ -3,8 +3,7 @@
 # This script runs the land data analysis for the NLDAS 4 models
 # Usage: exnldas_${model}.sh.ecf
 # History:  2013.05 c-shell by Youlong Xia (original owner)
-#           2013.05.17 converted to korn shell by Julia Zhu
-#           2015.05.05 modified to nldas version 3 for actual real-time  
+#           2013.05.17 converted to korn shell by Julia Zhu  
 ###################################################################
 set -x
 
@@ -18,7 +17,7 @@ echo $CURRENTD
 
 # DEFINE THE STRATDATE AND ENDDATE
 export RUNSTARTDATE=$PDYm4
-export RUNENDDATE=$CURRENTD
+export RUNENDDATE=$PDYm4
 echo $RUNSTARTDATE $RUNENDDATE
 echo "RUNNING NOAH MODEL THROUGH: $RUNENDDATE"
 
@@ -26,7 +25,7 @@ if [ $RUNSTARTDATE -le $RUNENDDATE ]; then
   $USHnldas/nldas_${model}.sh $RUNSTARTDATE $RUNENDDATE 
 else
   echo " $RUNSTARTDATE is greater than $RUNENDDATE"
-  echo " check RUNSTARTDATE should be less/eq than ${PDY} "
+  echo " check RUNSTARTDATE should be less/eq than ${PDYm4}  "
   echo " $job exiting... "
   export err=99; err_chk;
 fi

@@ -283,7 +283,7 @@ GFIOLIBDIR = $(LIB_DIR)
 CPPFLAGS    := -P
 PSASINC     := 
 
- FOPTS = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4}  -openmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
+ FOPTS = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4}  -qopenmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
 
 #FOPTS = $(LIB_DIR)libip_d.a $(LIB_DIR)libbacio_4.a $(LIB_DIR)libw3nco_4.a
 

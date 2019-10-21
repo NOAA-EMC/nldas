@@ -7,10 +7,9 @@
 # History:   2013.05  Justin Sheffield  Original script 
 #            2013.06  Youlong Xia Converted to Korn Shell to fit 
 #                     NCEP operational requirments   
-#            2014.01.13 Fixed a typo "ENDEAR" to "ENDYEAR" in the substitution 
+#            2014.01  Fixed a typo "ENDEAR" to "ENDYEAR" in the substitution 
 #                       for the global_retro_v4.0.3.txt file
-#            2018.02.13 Output all files into a single directory based on NCO
-#                       staff sugestions (use date to identify)
+#            2019.03  Use modular for VIC run    
 ############################################################################
 #       Control script for the LDAS version of the VIC model.
 #       Running daily simulations on Linux X86 machines at NCEP.
@@ -29,7 +28,7 @@ cd $DATA
 
 if [ $# -lt 2 ]; then
   echo "Usage: nldas_vic.sh start-date end-date"
-  $DATA/err_exit 99
+  err_exit 99
 fi
 
 sdate=$1
@@ -66,14 +65,13 @@ while [ $sdate -le $edate ]; do
   day2=`finddate.sh $sdate d+1`
 
   export pgm=nldas_prep
-  . $DATA/prep_step
+  . prep_step
 
   # copy initial conditions for vic model
-  export RESDIR0=${RESDIR0:-$COM_IN}
-  export RESDIR=$RESDIR0/nldas.$PDY
+  export RESDIR=${RESDIR:-$COM_IN}
   export viclog=$DATA/VIC_RUN
   if test ! -d ${viclog}; then mkdir -p ${viclog}; fi
-  cp $RESDIR/vic.t${cyc}z.${sdate}.VICrst $viclog/state.in
+  cp $RESDIR/nldas.$sdate/vic.t${cyc}z.VICrst $viclog/state.in
   
   # link fix fileds to $DATA directory
   ln -s $FIXnldas/vic $DATA/VIC_PARAM
@@ -87,7 +85,7 @@ while [ $sdate -le $edate ]; do
   
   hh=00
   while [ $hh -le 23 ]; do
-    export afile1=$RESDIR/nldas.t${cyc}z.${sdate}.force-a.grbf${hh}
+    export afile1=$COM_IN/nldas.$sdate/nldas.t${cyc}z.force-a.grbf${hh}
     cp $afile1 $narrdir/${sdate}${hh}.${asufix}
     let "hh=hh+1"
     if [ $hh -lt 10 ]; then hh=0$hh; fi
@@ -97,7 +95,7 @@ while [ $sdate -le $edate ]; do
   export narrd0=$DATA/NLDASNARR/$year0/$day0
   mkdir -p $narrd0
   
-  export afile23=$RESDIR/nldas.t${cyc}z.${day0}.force-a.grbf23
+  export afile23=$COM_IN/nldas.$day0/nldas.t${cyc}z.force-a.grbf23
   cp $afile23 $narrd0/${day0}23.${asufix}
  
  # copy the first hour grib forcing file  
@@ -186,10 +184,10 @@ while [ $sdate -le $edate ]; do
   # run the VIC post-processor
   echo "Pre-processor is running..." 
   export pgm=nldas_vic_prep
-  . $DATA/prep_step
+  . prep_step
   startmsg
-  $EXECnldas/nldas_vic_prep ${GLOBAL_FILE} >> $pgmout 2>errfile  
-  export err=$?; $DATA/err_chk
+  $EXECnldas/nldas_vic_prep ${GLOBAL_FILE}   
+  export err=$?; err_chk
 
   cp -p ${QC_LOG_FILE} ${viclog}/qc.log.${day1} >> ${LOG_FILE} 2>&1
 
@@ -200,10 +198,10 @@ while [ $sdate -le $edate ]; do
   echo "------------------" 
   echo "VIC model is running..." 
   export pgm=nldas_vic_nldas
-  . $DATA/prep_step
-  startmsg 
-  $EXECnldas/nldas_vic_ldas  -g ${GLOBAL_FILE} >> $pgmout 2>errfile
-  export err=$?; $DATA/err_chk
+  . prep_step
+  startmsg
+  $EXECnldas/nldas_vic_ldas  -g ${GLOBAL_FILE}
+  export err=$?; err_chk
 
   # make vic grib output directory
   export OUTPUT_GRIB_DIR=$DATA/VIC_OUT_grib_retro_v4.0.3
@@ -223,28 +221,22 @@ while [ $sdate -le $edate ]; do
    sed 's/     / /g' ${GLOBAL_FILE} > ${GLOBAL_FILE}.tmp
   
    export pgm=nldas_vic_post
-   . $DATA/prep_step
-   startmsg 
-   $EXECnldas/nldas_vic_post ${GLOBAL_FILE}.tmp >> $pgmout 2>errfile
-   export err=$?; $DATA/err_chk
+   . prep_step
+   startmsg
+   $EXECnldas/nldas_vic_post ${GLOBAL_FILE}.tmp
+   export err=$?; err_chk
 
    # Archive model initials
-   export COMREST0=${COMREST0:-$COM_OUT}
-   export COMT1=$COMREST0/nldas.$PDYp1   
-   if [ $sdate1 = $PDYm3 ]; then
-   cp $viclog/state.out $COMT1/vic.t${cyc}z.${sdate1}.VICrst
-   fi
-
-   export COMREST=$COMREST0/nldas.$PDY
-   mv  $viclog/state.out $COMREST/vic.t${cyc}z.${sdate1}.VICrst
+   export COMREST=${COMREST:-$COM_OUT}
+   mv  $viclog/state.out $COMREST/nldas.$sdate1/vic.t${cyc}z.VICrst
 
    # Copy sdate vic model ouput files to /com:
    # copy VIC output file form 00Z-23z on day1
    hh=00
    while [ $hh -le 23 ]; do
-     mv $OUTPUT_GRIB_DIR/${sdate}${hh}.VIC.grb $COMREST/nldas.t${cyc}z.${sdate}.vic.grb2f${hh}
+     mv $OUTPUT_GRIB_DIR/${sdate}${hh}.VIC.grb $COM_OUT/nldas.$sdate/vic.t${cyc}z.grbf${hh}
      if [ $SENDDBN = YES ]; then
-        $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COMREST/nldas.t${cyc}z.${sdate}.vic.grb2f${hh}
+        $DBNROOT/bin/dbn_alert MODEL ${alert_type} $job $COM_OUT/nldas.$sdate/vic.t${cyc}z.grbf${hh}
      fi
      let "hh=hh+1"
      if [ $hh -lt 10 ]; then hh=0$hh; fi

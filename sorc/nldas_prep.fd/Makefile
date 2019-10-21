@@ -132,9 +132,9 @@ FFLAGS      := $(cpp_path) -132 -c -g -O0 -convert big_endian -assume byterecl
 
 CPPFLAGS     = -P
 #### for grib1  
-##FOPTS        =  /nwprod/lib/libbacio_4.a /nwprod/lib/libw3nco_4.a /nwprod/lib/libip_4.a /nwprod/lib/libsp_4.a -openmp 
+##FOPTS        =  /nwprod/lib/libbacio_4.a /nwprod/lib/libw3nco_4.a /nwprod/lib/libip_4.a /nwprod/lib/libsp_4.a -qopenmp 
 
-FOPTS        = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4} -openmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
+FOPTS        = ${G2_LIB4} ${W3NCO_LIB4} ${W3EMC_LIB4} ${BACIO_LIB4} ${IP_LIB4} ${SP_LIB4} -qopenmp ${JASPER_LIB} ${PNG_LIB} ${Z_LIB}
 CFLAGS       = $(cpp_path) -c -I $(INC_MPI) -DIFC
 LDFLAGS      = 
 CPP         := /lib/cpp
@@ -181,10 +181,10 @@ FC := $(USER_FC)
 endif
 
 clean:
-	$(RM) -f *.o *.mod *.stb *.f90 *.d $(MODEL_EXEDIR)/$(EXENAME)
+	$(RM) -f *.o *.mod *.stb *.d $(MODEL_EXEDIR)/$(EXENAME)
 
 realclean:
-	$(RM) -f *.o *.d *.mod *.stb *.f90 $(MODEL_EXEDIR)/$(EXENAME)
+	$(RM) -f *.o *.d *.mod *.stb $(MODEL_EXEDIR)/$(EXENAME)
 
 
 #------------------------------------------------------------------------

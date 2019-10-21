@@ -49,9 +49,9 @@ c    +            ' jret = ', jret, ' lugb= ', lugb
 C          WRITE(*,*) ' kpds = ', kpds, ' jpds = ', jpds
 
           IF (iret .NE. 0) THEN
-             OPEN(80, file='stop.file')
-             WRITE(80,*) 'noah model stopped'
-             WRITE(*,*) 'STOP NAOH MODEL, IRET=', iret
+             OPEN(80, file='stop.file') 
+             WRITE(80,*) 'iret=', iret
+             WRITE(*,*) 'STOP NAOH MODEL'
 CJZ     Added error checking
              CALL ERREXIT(iret)
              STOP

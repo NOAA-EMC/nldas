@@ -7,12 +7,6 @@ cp -p cpc_precip_convert.fd/cpc_precip_convert  $EXECDIR
 
 cp -p nldas_prep.fd/nldas_prep $EXECDIR
 
-cp -p nldas_precip.fd/precforce  $EXECDIR
-
-cp -p nldas_namrr.fd/mergeforce $EXECDIR
-
-cp -p nldas_nam.fd/namforecast $EXECDIR
-
 cp -p nldas_sac_ldas.fd/nldas_sac_ldas  $EXECDIR
 
 cp -p nldas_rout.fd/nldas_rout  $EXECDIR
