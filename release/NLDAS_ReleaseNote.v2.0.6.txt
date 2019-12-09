@@ -79,3 +79,4 @@ Change due to Stage II radar data from com into com2 and directory is also chnag
 V2.0.6 ~@~S release March 15, 2019
 Use moudler for compiling, transition from wcoss phase 1 (tide) to wcoss phase (mars), coresponding change for ush and scripts, fix precipitation issue when cpc precipitation in dcom is missing if cpc compute farm fails (makeprecip.F90 and gridcpcnew.f in /nldas.v2.0.6/sorc/nldas_prep.fd/DRIVER/).
 
+As fixed fields are too large so that they cannot be put to vlab. The fix directory can be copied either from dell /gpfs/dell2/emc/modeling/noscrub/Youlong.Xia/nldas.v2.0.6/fix or wcoss phase 1 (/nwprod/nldas.v2.0.5/fix). 
