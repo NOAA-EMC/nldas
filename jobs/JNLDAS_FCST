@@ -44,6 +44,7 @@ mkdir -p $DATA
 cd $DATA
 
 export cycle=t${cyc}z
+export jlogfile=${jlogfile:-$DATA/jlogfile.${jobid}}
 
 ##########################
 # Specify NET and RUN Name
@@ -57,9 +58,6 @@ export MODEL=${MODEL:-`echo $model |tr '[a-z]' '[A-Z]'`}
 ###########################
 # Define alert_type
 ###########################
-if [ $RUN_ENVIR = prod -a $envir != prod ]; then
-  export alert_type=NLDAS_GB2_PARA
-fi
 
 export alert_type=${alert_type:-NLDAS_GB2}
 
@@ -82,8 +80,7 @@ setpdy.sh
 ##############################################
 # Define COM directories
 ##############################################
-if [ "$RUN_ENVIR" = "nco" ] ### For nco operation
-then
+
 export COM_IN=${COM_IN:-${COMROOT:?}/${NET}/${envir}}
 export COM_OUT=${COM_OUT:-${COMROOT}/${NET}/${envir}}
 
@@ -96,7 +93,7 @@ export LOGDIR=${LOGDIR:-${COMROOT}/${NET}/${envir}/logdir}
 mkdir -m 775 -p $COMOUT $COMOUTp1 $LOGDIR
 
 env
-fi
+
 #############################################################
 # execute the script
 ${FCSTSH:-$HOMEnldas/scripts/exnldas_fcst.sh.ecf}
