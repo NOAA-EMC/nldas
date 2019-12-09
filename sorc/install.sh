@@ -3,6 +3,8 @@ date
 
 EXECDIR=../exec
 
+mkdir -p -m 775 $EXECDIR
+
 cp -p cpc_precip_convert.fd/cpc_precip_convert  $EXECDIR
 
 cp -p nldas_prep.fd/nldas_prep $EXECDIR

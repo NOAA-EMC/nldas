@@ -20,6 +20,9 @@ module load sp/2.0.2
 module load ip/3.0.1
 module load NetCDF/3.6.3
 module use -a /gpfs/dell1/nco/ops/nwpara/modulefiles/compiler_prod/ips/18.0.1
+module list
+
+echo " nldas.v2.0.6 compiling starts "
 
 cd ./cpc_precip_convert.fd
 make clean
@@ -29,6 +32,7 @@ cd ../nldas_prep.fd
 sh compile.sh
 
 cd ../nldas_sac_ldas.fd
+mkdir -p -m 775 obj
 make clean
 make
 
@@ -41,6 +45,7 @@ sh compile.sh
 
 
 cd ../nldas_noah_ldas.fd
+mkdir -p -m 775 OBJ
 make clean
 make
 
@@ -55,5 +60,7 @@ cd ../nldas_vic_post.fd
 sh compile.sh
 
 cd ..
+
+echo " nldas.v2.0.6 comipling is completed "
 date
 
