@@ -17,13 +17,20 @@ export COM_IN=${COM_IN:-$workdir/$LOGNAME/com/nldas.${nldas_ver}/dev}
 export COM_OUT=${COM_OUT:-$COM_IN}
 
 # set up com and decom directory used
-export COMROOTd2=/gpfs/dell2/nco/ops
+export COMROOTd2=/gpfs/dell2/nco/ops/com
 export DCOMROOT=/gpfs/dell1/nco/ops/dcom
-export COMROOTp1=/gpfs/tp1/nco/ops/com
+export COMROOTp1=/gpfs/dell1/nco/ops/com
 
 export COMINrcdas=${COMINrcdas:-${COMROOTp1}/rcdas/prod}
-export COMINpcpanl=${COMINpcpanl:-${COMROOTd2}/pcpanl/prod}
+#export COMINpcpanl=${COMINpcpanl:-${COMROOTd2}/pcpanl/prod}
 export DCOM_IN=${DCOM_IN:-${DCOMROOT}/prod}
+
+# set rcdas forcing directory
+export COMINrcdas=${COMINrcdas:-$(compath.py rcdas/prod)}
+
+### Using Ying Lin Stage 4 data
+export COMROOTp2=/gpfs/gp2/ptmp/emc.rtmapara/com
+export COMINpcpanl=${COMINpcpanl:-${COMROOTp2}/pcpanl/para}
 
 export DATA_IN=/gpfs/dell2/ptmp/$LOGNAME/tmpnwprd
 export jlogfile=$DATA_IN/jlogfile
