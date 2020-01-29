@@ -83,12 +83,17 @@ while [ $sdate -le $edate ]; do
 
    for hh in 00 01 02 03 04 05 06 07 08 09 10 11 12
    do
-   gunzip -v -c $COMINpcpanl/pcpanl.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb
+##   gunzip -v -c $COMINpcpanl/pcpanl.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb
+
+   $CNVGRIB -g21 $COMINpcpanl/pcpanl.$today/st4_conus.${today}${hh}.01h.grb2 $pstage2/ST2ml${today}${hh}.Grb
    done
 
    for hh in 13 14 15 16 17 18 19 20 21 22 23
    do
-   gunzip -v -c $COMINpcpanl/pcpanl.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb  
+##   gunzip -v -c $COMINpcpanl/pcpanl.$today/ST2ml${today}${hh}.Grb.gz >$pstage2/ST2ml${today}${hh}.Grb
+ 
+  $CNVGRIB -g21 $COMINpcpanl/pcpanl.$today/st4_conus.${today}${hh}.01h.grb2 $pstage2/ST2ml${today}${hh}.Grb
+ 
    done
 
    #get CMORPH data
