@@ -64,11 +64,17 @@
 !  to fill in a field where the Stage IV was missing.
 !  (Perhaps use the FSOURCE array?)
 !
-!  Fix the program so that it has a fall back when there is no CPC gage data file.
+!Fix the program so that it has a fall back when there is no CPC gage data file.
 !
-!  1 May 2012: Youlong Xia: modifed code to use 0.5 degree CPC operational
-!  Global precipitation to replace CPC US-Mexico precipitation as latter
-!  stopped in March 2010  
+! 1 May 2012: Youlong Xia: modifed code to use 0.5 degree CPC operational
+!   Global precipitation to replace CPC US-Mexico precipitation as latter
+!   stopped in March 2010
+!
+! 21 January 2020: Youlong Xia, modified code by changing NSTAGE4 from 1020800
+!    (May1996-Dec2001) into 987601 (Jan2002-present) as Stage IV is on a
+!    (1121 x 881) grid. The test showed that results for generated precip
+!    are the same. For the deails, please see
+!    https://www.emc.ncep.noaa.gov/mmb/ylin/pcpanl/stage2/st2compare.htm  
 !=========================================================================
 
 SUBROUTINE MAKEPRECIP(LDAS,GRID)
@@ -96,7 +102,7 @@ INTEGER NLDAS, NX, NY, BOUND, JPDS(25), IP, IPOPT(20), I, N,&
 
 
 PARAMETER (NLDAS = 103936, NX = 464, NY = 224, BOUND=16,&
-           NSTAGE4 = 1020800,NHX=720,NHY=360,NUNI=259200,&
+           NSTAGE4 = 987601,NHX=720,NHY=360,NUNI=259200,&
            NPRISM=103936,NHPD=693,ncmor=8159252)
 
 
